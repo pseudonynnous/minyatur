@@ -1,0 +1,47 @@
+@use '/var/www/html/actipro/buga-kit/source/stylesheet/variables-global';
+@forward '/var/www/html/actipro/buga-kit/source/stylesheet/variables-global';
+
+/** COLORS **/
+/** Theme Colors **/
+$color-theme-light: rgba(84, 180, 203, 1);
+$color-theme-base: rgba(10, 150, 183, 1);
+$color-theme-dark: rgba(2, 91, 112, 1);
+
+$color-theme-second-light: rgba(252, 238, 191, 1);
+$color-theme-second-base: rgba(254, 163, 96, 1);
+$color-theme-second-dark: rgba(241, 101, 29, 1);
+/** End of Theme Colors **/
+
+$color-image-background-color: rgb(35, 35, 37);
+$color-zoom-lens: rgb(19, 28, 209, .4);
+
+// Theme Colors
+:root {
+	--color-theme-light: #{$color-theme-light};
+	--color-theme-base: #{$color-theme-base};
+	--color-theme-dark: #{$color-theme-dark};
+
+	body.dark-mode {
+		--color-theme-light: #{$color-theme-dark};
+		--color-theme-base: #{$color-theme-base};
+		--color-theme-dark: #{$color-theme-light};
+	}
+
+	--color-theme-second-light: #{$color-theme-second-light};
+	--color-theme-second-base: #{$color-theme-second-base};
+	--color-theme-second-dark: #{$color-theme-second-dark};
+
+	body.dark-mode {
+		--color-theme-second-light: #{$color-theme-second-dark};
+		--color-theme-second-base: #{$color-theme-second-base};
+		--color-theme-second-dark: #{$color-theme-second-light};
+	}
+
+	--color-image-background-color: #{$color-image-background-color};
+	--color-zoom-lens: #{$color-zoom-lens};
+	
+	body.dark-mode {
+		--color-image-background-color: #{$color-image-background-color};
+		--color-zoom-lens: #{$color-zoom-lens};
+	}
+}
