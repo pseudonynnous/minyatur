@@ -322,7 +322,7 @@
   --opacity-backdrop: rgba(25, 25, 25, 0.8);
 }
 
-.buga-slider {
+.minyatur {
   position: relative;
   width: 100%;
   height: 100%;
@@ -331,13 +331,13 @@
   margin: 0 auto;
   /* margin-bottom: 17px; */
 }
-.buga-slider > div {
+.minyatur > div {
   position: relative;
   display: block;
   width: 100%;
   margin: 0 auto;
 }
-.buga-slider .bgsl-board {
+.minyatur .minyatur-board {
   width: 100%;
   margin: 0 auto;
   /*center-aligned*/
@@ -348,7 +348,7 @@
   /* ---------Arrow buttons ------- */
   /* The arrow button id should be: slider id + ("-prev", "-next", and "-pause-play") */
 }
-.buga-slider .bgsl-board ul {
+.minyatur .minyatur-board ul {
   position: absolute;
   top: 0;
   left: 0;
@@ -362,7 +362,7 @@
   display: flex;
   flex-wrap: nowrap;
 }
-.buga-slider .bgsl-board li {
+.minyatur .minyatur-board li {
   position: relative;
   display: block;
   width: 100%;
@@ -375,8 +375,8 @@
   box-sizing: border-box;
   flex-shrink: 0;
 }
-.buga-slider .bgsl-board li img,
-.buga-slider .bgsl-board li i {
+.minyatur .minyatur-board li img,
+.minyatur .minyatur-board li i {
   /*Note: If transitionType is zoom, it will be overridden to cover.*/
   position: relative;
   display: block;
@@ -385,11 +385,11 @@
   width: 100%;
   height: 100%;
 }
-.buga-slider .bgsl-board li .bgsl-on-image-message-wrapper {
+.minyatur .minyatur-board li .minyatur-on-image-message-wrapper {
   position: relative;
   margin: 0 auto;
 }
-.buga-slider .bgsl-board li .bgsl-on-image-message-container {
+.minyatur .minyatur-board li .minyatur-on-image-message-container {
   position: absolute;
   bottom: 40px;
   left: 40px;
@@ -400,11 +400,11 @@
   padding: 0.5vmin 1vmin;
 }
 @media only screen and (max-width: 667px) {
-  .buga-slider .bgsl-board li .bgsl-on-image-message-container {
+  .minyatur .minyatur-board li .minyatur-on-image-message-container {
     left: 10px;
   }
 }
-.buga-slider .bgsl-board .bgsl-board-button-container {
+.minyatur .minyatur-board .minyatur-board-button-container {
   position: absolute;
   margin: 0 auto;
   width: 100%;
@@ -414,8 +414,8 @@
   transform: translateX(-50%);
   z-index: 1;
 }
-.buga-slider .bgsl-board .bgsl-board-prev-button,
-.buga-slider .bgsl-board .bgsl-board-next-button {
+.minyatur .minyatur-board .minyatur-board-prev-button,
+.minyatur .minyatur-board .minyatur-board-next-button {
   position: absolute;
   display: flex;
   justify-content: center;
@@ -437,21 +437,21 @@
   -webkit-user-select: none;
   z-index: 2;
 }
-.buga-slider .bgsl-board:hover .bgsl-board-prev-button, .buga-slider .bgsl-board:hover .bgsl-board-next-button {
+.minyatur .minyatur-board:hover .minyatur-board-prev-button, .minyatur .minyatur-board:hover .minyatur-board-next-button {
   opacity: 1;
 }
-.buga-slider .bgsl-board:hover .bgsl-board-prev-button::before, .buga-slider .bgsl-board:hover .bgsl-board-next-button::before {
+.minyatur .minyatur-board:hover .minyatur-board-prev-button::before, .minyatur .minyatur-board:hover .minyatur-board-next-button::before {
   border-left: 4px solid white;
   border-top: 4px solid white;
 }
-.buga-slider .bgsl-board .bgsl-board-prev-button {
+.minyatur .minyatur-board .minyatur-board-prev-button {
   left: 0;
 }
-.buga-slider .bgsl-board .bgsl-board-next-button {
+.minyatur .minyatur-board .minyatur-board-next-button {
   right: 0;
 }
-.buga-slider .bgsl-board .bgsl-board-prev-button::before,
-.buga-slider .bgsl-board .bgsl-board-next-button::before {
+.minyatur .minyatur-board .minyatur-board-prev-button::before,
+.minyatur .minyatur-board .minyatur-board-next-button::before {
   position: absolute;
   content: "";
   width: 30px;
@@ -460,7 +460,7 @@
   border-top: 3px solid white;
   border-radius: 2px;
 }
-.buga-slider .bgsl-board .bgsl-board-prev-button::before {
+.minyatur .minyatur-board .minyatur-board-prev-button::before {
   -ms-transform: rotate(-45deg);
   /*IE 9*/
   -webkit-transform: rotate(-45deg);
@@ -468,7 +468,7 @@
   backface-visibility: hidden;
   right: 4px;
 }
-.buga-slider .bgsl-board .bgsl-board-next-button::before {
+.minyatur .minyatur-board .minyatur-board-next-button::before {
   -ms-transform: rotate(135deg);
   /*IE 9*/
   -webkit-transform: rotate(135deg);
@@ -476,24 +476,24 @@
   backface-visibility: hidden;
   left: 4px;
 }
-.buga-slider .bgsl-board .bgsl-board-prev-button div,
-.buga-slider .bgsl-board .bgsl-board-next-button div {
+.minyatur .minyatur-board .minyatur-board-prev-button div,
+.minyatur .minyatur-board .minyatur-board-next-button div {
   display: none;
 }
-.buga-slider .bgsl-board .bgsl-board-prev-button,
-.buga-slider .bgsl-board .bgsl-board-next-button {
+.minyatur .minyatur-board .minyatur-board-prev-button,
+.minyatur .minyatur-board .minyatur-board-next-button {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
 }
 @media only screen and (max-width: 667px) {
-  .buga-slider .bgsl-board .bgsl-board-button-container {
+  .minyatur .minyatur-board .minyatur-board-button-container {
     display: none;
   }
 }
 
 /* DOT THUMBNAIL */
-.bgsl-thumbnail-dot {
+.minyatur-thumbnail-dot {
   position: absolute;
   width: 100%;
   left: 0;
@@ -501,7 +501,7 @@
   background-color: transparent;
   z-index: 1;
 }
-.bgsl-thumbnail-dot ul {
+.minyatur-thumbnail-dot ul {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -512,7 +512,7 @@
   margin: 0;
   box-sizing: border-box;
 }
-.bgsl-thumbnail-dot li {
+.minyatur-thumbnail-dot li {
   width: 17px;
   height: 17px;
   margin: 11px 7px;
@@ -522,7 +522,7 @@
   cursor: pointer;
   transition: all 0.4s;
 }
-.bgsl-thumbnail-dot li.active {
+.minyatur-thumbnail-dot li.active {
   background-color: white;
   opacity: 1;
 }
@@ -531,7 +531,7 @@
 /* THUMBNAIL IMAGE SHARED STYLE */
 /* END OF THUMBNAIL IMAGE SHARED STYLE */
 /* BASIC THUMBNAIL */
-.bgsl-thumbnail-basic {
+.minyatur-thumbnail-basic {
   position: relative;
   width: 100%;
   margin: 0 auto;
@@ -541,7 +541,7 @@
   box-sizing: border-box;
   user-select: none;
 }
-.bgsl-thumbnail-basic ul {
+.minyatur-thumbnail-basic ul {
   position: relative;
   display: flex;
   flex-wrap: nowrap;
@@ -549,7 +549,7 @@
   padding: 6px;
   margin: 0 auto;
 }
-.bgsl-thumbnail-basic ul li {
+.minyatur-thumbnail-basic ul li {
   position: relative;
   display: flex;
   align-items: center;
@@ -573,27 +573,27 @@
           font-size: 0;
       } */
 }
-.bgsl-thumbnail-basic ul li + li {
+.minyatur-thumbnail-basic ul li + li {
   margin-left: 6px;
 }
-.bgsl-thumbnail-basic ul li.active, .bgsl-thumbnail-basic ul li.active:hover {
+.minyatur-thumbnail-basic ul li.active, .minyatur-thumbnail-basic ul li.active:hover {
   border-color: var(--color-theme-dark);
 }
-.bgsl-thumbnail-basic ul li:hover {
+.minyatur-thumbnail-basic ul li:hover {
   background-color: var(--color-theme-light);
 }
-.bgsl-thumbnail-basic ul li img {
+.minyatur-thumbnail-basic ul li img {
   max-width: 100%;
   max-height: 100%;
   display: block;
 }
-.bgsl-thumbnail-basic ul {
+.minyatur-thumbnail-basic ul {
   flex-wrap: wrap;
 }
 
 /* END OF BASIC THUMBNAIL */
 /* SLIDER THUMBNAIL */
-.bgsl-thumbnail-slider {
+.minyatur-thumbnail-slider {
   position: relative;
   width: 100%;
   margin: 0 auto;
@@ -604,11 +604,11 @@
   user-select: none;
 }
 @media only screen and (max-width: 667px) {
-  .bgsl-thumbnail-slider {
+  .minyatur-thumbnail-slider {
     padding: 0;
   }
 }
-.bgsl-thumbnail-slider ul {
+.minyatur-thumbnail-slider ul {
   position: relative;
   display: flex;
   flex-wrap: nowrap;
@@ -616,7 +616,7 @@
   padding: 6px;
   margin: 0 auto;
 }
-.bgsl-thumbnail-slider ul li {
+.minyatur-thumbnail-slider ul li {
   position: relative;
   display: flex;
   align-items: center;
@@ -640,21 +640,21 @@
           font-size: 0;
       } */
 }
-.bgsl-thumbnail-slider ul li + li {
+.minyatur-thumbnail-slider ul li + li {
   margin-left: 6px;
 }
-.bgsl-thumbnail-slider ul li.active, .bgsl-thumbnail-slider ul li.active:hover {
+.minyatur-thumbnail-slider ul li.active, .minyatur-thumbnail-slider ul li.active:hover {
   border-color: var(--color-theme-dark);
 }
-.bgsl-thumbnail-slider ul li:hover {
+.minyatur-thumbnail-slider ul li:hover {
   background-color: var(--color-theme-light);
 }
-.bgsl-thumbnail-slider ul li img {
+.minyatur-thumbnail-slider ul li img {
   max-width: 100%;
   max-height: 100%;
   display: block;
 }
-.bgsl-thumbnail-slider .bgsl-thumbnail-slider-backward-button {
+.minyatur-thumbnail-slider .minyatur-thumbnail-slider-backward-button {
   position: absolute;
   display: none;
   justify-content: center;
@@ -673,7 +673,7 @@
   left: 0px;
   right: auto;
 }
-.bgsl-thumbnail-slider .bgsl-thumbnail-slider-backward-button::before {
+.minyatur-thumbnail-slider .minyatur-thumbnail-slider-backward-button::before {
   position: absolute;
   content: " ";
   width: 20px;
@@ -683,7 +683,7 @@
   right: 3px;
   transform: rotate(-45deg);
 }
-.bgsl-thumbnail-slider .bgsl-thumbnail-slider-forward-button {
+.minyatur-thumbnail-slider .minyatur-thumbnail-slider-forward-button {
   position: absolute;
   display: none;
   justify-content: center;
@@ -702,7 +702,7 @@
   left: auto;
   right: 0px;
 }
-.bgsl-thumbnail-slider .bgsl-thumbnail-slider-forward-button::before {
+.minyatur-thumbnail-slider .minyatur-thumbnail-slider-forward-button::before {
   position: absolute;
   content: " ";
   width: 20px;
@@ -713,23 +713,23 @@
   transform: rotate(135deg);
 }
 @media only screen and (min-width: 667px) {
-  .bgsl-thumbnail-slider.scrollOn {
+  .minyatur-thumbnail-slider.scrollOn {
     padding-right: 44px;
     padding-left: 44px;
   }
-  .bgsl-thumbnail-slider.scrollOn .bgsl-thumbnail-slider-backward-button,
-  .bgsl-thumbnail-slider.scrollOn .bgsl-thumbnail-slider-forward-button {
+  .minyatur-thumbnail-slider.scrollOn .minyatur-thumbnail-slider-backward-button,
+  .minyatur-thumbnail-slider.scrollOn .minyatur-thumbnail-slider-forward-button {
     display: flex;
   }
 }
 
 /* END OF SLIDER THUMBNAIL */
 /* Zoom */
-.bgsl-zoom-container {
+.minyatur-zoom-container {
   position: relative;
 }
 
-.bgsl-zoom-lens {
+.minyatur-zoom-lens {
   position: absolute;
   visibility: hidden;
   /*set the size of the lens:*/
@@ -742,7 +742,7 @@
 }
 
 /* End of zoom */
-.bgsl-zoom-result {
+.minyatur-zoom-result {
   position: absolute;
   border: 2px solid var(--bordercolor-grey-light-400);
   visibility: hidden;

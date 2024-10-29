@@ -1,7 +1,7 @@
 @use '/var/www/html/actipro/buga-kit/source/stylesheet/variables-global';
 @use "variables-local";
 
-.buga-slider {
+.minyatur {
     position: relative;
     width: 100%;
     height: 100%;
@@ -17,7 +17,7 @@
         margin: 0 auto;
     }
 
-    .bgsl-board {
+    .minyatur-board {
         width: 100%;
         margin: 0 auto;
         /*center-aligned*/
@@ -67,12 +67,12 @@
                 height: 100%;
             }
 
-            .bgsl-on-image-message-wrapper {
+            .minyatur-on-image-message-wrapper {
                 position: relative;
                 margin: 0 auto;
             }
 
-            .bgsl-on-image-message-container {
+            .minyatur-on-image-message-container {
                 position: absolute;
                 bottom: 40px;
                 left: 40px;
@@ -84,7 +84,7 @@
             }
 
             @media only screen and (max-width: variables-global.$responsive-breakpoint-level-1) {
-                .bgsl-on-image-message-container {
+                .minyatur-on-image-message-container {
                     left: 10px;
                 }
             }
@@ -92,7 +92,7 @@
 
         /* ---------Arrow buttons ------- */
         /* The arrow button id should be: slider id + ("-prev", "-next", and "-pause-play") */
-        .bgsl-board-button-container {
+        .minyatur-board-button-container {
             position: absolute;
             margin: 0 auto;
             width: 100%;
@@ -103,8 +103,8 @@
             z-index: 1;
         }
 
-        .bgsl-board-prev-button,
-        .bgsl-board-next-button {
+        .minyatur-board-prev-button,
+        .minyatur-board-next-button {
             position: absolute;
             display: flex;
             justify-content: center;
@@ -127,27 +127,27 @@
             z-index: 2;
         }
 
-        &:hover .bgsl-board-prev-button,
-        &:hover .bgsl-board-next-button {
+        &:hover .minyatur-board-prev-button,
+        &:hover .minyatur-board-next-button {
             opacity: 1;
         }
 
-        &:hover .bgsl-board-prev-button::before,
-        &:hover .bgsl-board-next-button::before {
+        &:hover .minyatur-board-prev-button::before,
+        &:hover .minyatur-board-next-button::before {
             border-left: 4px solid white;
             border-top: 4px solid white;
         }
 
-        .bgsl-board-prev-button {
+        .minyatur-board-prev-button {
             left: 0;
         }
 
-        .bgsl-board-next-button {
+        .minyatur-board-next-button {
             right: 0;
         }
 
-        .bgsl-board-prev-button::before,
-        .bgsl-board-next-button::before {
+        .minyatur-board-prev-button::before,
+        .minyatur-board-next-button::before {
             position: absolute;
             content: "";
             width: 30px;
@@ -157,7 +157,7 @@
             border-radius: 2px;
         }
 
-        .bgsl-board-prev-button::before {
+        .minyatur-board-prev-button::before {
             -ms-transform: rotate(-45deg);
             /*IE 9*/
             -webkit-transform: rotate(-45deg);
@@ -166,7 +166,7 @@
             right: 4px;
         }
 
-        .bgsl-board-next-button::before {
+        .minyatur-board-next-button::before {
             -ms-transform: rotate(135deg);
             /*IE 9*/
             -webkit-transform: rotate(135deg);
@@ -175,20 +175,20 @@
             left: 4px;
         }
 
-        .bgsl-board-prev-button div,
-        .bgsl-board-next-button div {
+        .minyatur-board-prev-button div,
+        .minyatur-board-next-button div {
             display: none;
         }
 
-        .bgsl-board-prev-button,
-        .bgsl-board-next-button {
+        .minyatur-board-prev-button,
+        .minyatur-board-next-button {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
 
         @media only screen and (max-width: variables-global.$responsive-breakpoint-level-1) {
-            .bgsl-board-button-container {
+            .minyatur-board-button-container {
                 display: none;
             }
         }
@@ -196,7 +196,7 @@
 }
 
 /* DOT THUMBNAIL */
-.bgsl-thumbnail-dot {
+.minyatur-thumbnail-dot {
     position: absolute;
     width: 100%;
     left: 0;
@@ -306,7 +306,7 @@
     /* END OF THUMBNAIL IMAGE SHARED STYLE */
 
     /* BASIC THUMBNAIL */
-    .bgsl-thumbnail-basic {
+    .minyatur-thumbnail-basic {
         @include thumbnail-image-container-shared-style;
         @include thumbnail-image-list-shared-style;
 
@@ -317,7 +317,7 @@
     /* END OF BASIC THUMBNAIL */
 
     /* SLIDER THUMBNAIL */
-    .bgsl-thumbnail-slider {
+    .minyatur-thumbnail-slider {
         @include thumbnail-image-container-shared-style;
 
         @media only screen and (max-width: variables-global.$responsive-breakpoint-level-1) {
@@ -355,7 +355,7 @@
             border-top: 3px solid #ddd;
         }
 
-        .bgsl-thumbnail-slider-backward-button {
+        .minyatur-thumbnail-slider-backward-button {
             @include thumbnail-button-shared-style;
             left: 0px;
             right: auto;
@@ -367,7 +367,7 @@
             }
         }
 
-        .bgsl-thumbnail-slider-forward-button {
+        .minyatur-thumbnail-slider-forward-button {
             @include thumbnail-button-shared-style;
             left: auto;
             right: 0px;
@@ -384,8 +384,8 @@
                 padding-right: 44px;
                 padding-left: 44px;
 
-                .bgsl-thumbnail-slider-backward-button,
-                .bgsl-thumbnail-slider-forward-button {
+                .minyatur-thumbnail-slider-backward-button,
+                .minyatur-thumbnail-slider-forward-button {
                     display: flex;
                 }
             }
@@ -394,11 +394,11 @@
     /* END OF SLIDER THUMBNAIL */
 
     /* Zoom */
-    .bgsl-zoom-container {
+    .minyatur-zoom-container {
         position: relative;
     }
 
-    .bgsl-zoom-lens {
+    .minyatur-zoom-lens {
         position: absolute;
         visibility: hidden;
         /*set the size of the lens:*/
@@ -415,7 +415,7 @@
     // border: 1px solid #d4d4d4;
 }
 
-.bgsl-zoom-result {
+.minyatur-zoom-result {
     position: absolute;
     border: 2px solid var(--bordercolor-grey-light-400);
     visibility: hidden;

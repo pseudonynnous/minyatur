@@ -9,8 +9,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const context = path.join(__dirname, '..');
 
 const sourceMap = {
-  'buga-slider.js': path.join(context, 'source/javascript/buga-slider.js'),
-  'buga-slider.junk': path.join(context, 'source/stylesheet/buga-slider.scss')
+  'minyatur.js': path.join(context, 'source/javascript/minyatur.js'),
+  'minyatur.junk': path.join(context, 'source/stylesheet/minyatur.scss')
 };
 
 const eslintOptions = {

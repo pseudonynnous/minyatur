@@ -3,7 +3,7 @@ class Control {
     this.sliderInstance = sliderInstance;
 
     this.buttonContainer = document.createElement('div');
-    this.buttonContainer.classList.add('bgsl-board-button-container');
+    this.buttonContainer.classList.add('minyatur-board-button-container');
     this.sliderInstance.boardWrapper.appendChild(this.buttonContainer);
 
     if (this.sliderInstance.configObject.contentWidthLimit) {
@@ -11,11 +11,11 @@ class Control {
     }
 
     this.prevButton = document.createElement('div');
-    this.prevButton.classList.add('bgsl-board-prev-button');
+    this.prevButton.classList.add('minyatur-board-prev-button');
     this.buttonContainer.appendChild(this.prevButton);
 
     this.nextButton = document.createElement('div');
-    this.nextButton.classList.add('bgsl-board-next-button');
+    this.nextButton.classList.add('minyatur-board-next-button');
     this.buttonContainer.appendChild(this.nextButton);
 
     this._prevItem = this.prevItem.bind(this);

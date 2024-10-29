@@ -4,14 +4,14 @@ class Message {
 
     // Wrapper'ı buraya sadece contentWidthLimit ekleyebilmek için koyuyoruz. contentWidthLimit kaldırılırsa wrapper'de kaldırılabilir.
     this.boardListItemMessageWrapper = document.createElement('div');
-    this.boardListItemMessageWrapper.classList.add('bgsl-on-image-message-wrapper');
+    this.boardListItemMessageWrapper.classList.add('minyatur-on-image-message-wrapper');
 
     if (this.sliderInstance.configObject.contentWidthLimit) {
       this.boardListItemMessageWrapper.style.maxWidth = this.sliderInstance.configObject.contentWidthLimit;
     }
 
     this.boardListItemMessageContainer = document.createElement('div');
-    this.boardListItemMessageContainer.classList.add('bgsl-on-image-message-container');
+    this.boardListItemMessageContainer.classList.add('minyatur-on-image-message-container');
     this.boardListItemMessageContainer.appendChild(document.createTextNode(messsage));
 
     this.boardListItemMessageWrapper.appendChild(this.boardListItemMessageContainer);

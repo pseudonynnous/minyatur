@@ -12,13 +12,13 @@ class Zoom {
     });
 
     this.container = document.createElement('div');
-    this.container.classList.add('bgsl-zoom-container');
+    this.container.classList.add('minyatur-zoom-container');
 
     this.result = document.createElement('div');
-    this.result.classList.add('bgsl-zoom-result');
+    this.result.classList.add('minyatur-zoom-result');
 
     this.lens = document.createElement('div');
-    this.lens.classList.add('bgsl-zoom-lens');
+    this.lens.classList.add('minyatur-zoom-lens');
     this.sliderInstance.boardWrapper.appendChild(this.lens);
 
     this._zoomIn = this.zoomIn.bind(this);

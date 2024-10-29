@@ -20,11 +20,11 @@ class Slider {
     });
 
     this.mainContainer = document.getElementById(this.configObject.id);
-    this.mainContainer.classList.add('buga-slider');
-    this.mainContainer.__bugaSlider = this;
+    this.mainContainer.classList.add('minyatur');
+    this.mainContainer.__minyatur = this;
 
     if (!this.mainContainer) {
-      console.warn(`BugaSlider Error: There is no container with selector: ${this.configObject.id}`);
+      console.warn(`Minyatur Error: There is no container with selector: ${this.configObject.id}`);
 
       return;
     }
@@ -34,7 +34,7 @@ class Slider {
       const sliderImages = this.mainContainer.firstElementChild.children;
 
       if (!sliderImages.length || !sliderImages[0].hasAttribute('data-src')) {
-        console.warn('BugaSlider Error: There is no image to show. Please insert `div` inside of `slider container element` and than insert images to the `div` with `img` tag.');
+        console.warn('Minyatur Error: There is no image to show. Please insert `div` inside of `slider container element` and than insert images to the `div` with `img` tag.');
 
         return;
       }
@@ -49,13 +49,13 @@ class Slider {
     }
 
     this.boardWrapper = document.createElement('div');
-    this.boardWrapper.classList.add('bgsl-board');
+    this.boardWrapper.classList.add('minyatur-board');
     this.boardWrapper.style.visibility = 'hidden';
     this.mainContainer.appendChild(this.boardWrapper);
 
     // AspectRatio ve genişlik ve yükseklikle ilgili ilişkilerin kurulması. config: aspectRatio, maxWidth, maxHeight
     this.boardListContainer = document.createElement('div');
-    this.boardListContainer.classList.add('bgsl-board-list-container');
+    this.boardListContainer.classList.add('minyatur-board-list-container');
     this.boardListContainer.style.overflow = 'hidden';
     this.boardListContainer.style.height = '0';
     this.boardWrapper.appendChild(this.boardListContainer);

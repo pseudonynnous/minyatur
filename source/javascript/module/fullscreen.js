@@ -13,7 +13,7 @@ class Fullscreen {
 
     this.wrapper = document.createElement('div');
     this.wrapper.id = this.containerId;
-    this.wrapper.classList.add('bgsl-fullscreen-wrapper');
+    this.wrapper.classList.add('minyatur-fullscreen-wrapper');
     this.wrapper.style = 'position: fixed; width: 100%; height: 100%; background-color: white; top: 0; left: 0; z-index: 9999';
 
     this.wrapper.addEventListener('dblclick', event => event.preventDefault());

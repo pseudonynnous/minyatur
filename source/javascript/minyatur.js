@@ -1,5 +1,5 @@
 import Slider from './engine/slider';
 
-window.BugaSlider = Slider;
+window.Minyatur = Slider;
 
 export default Slider;

@@ -77,7 +77,7 @@ class Slider extends Thumbnail {
   constructor(sliderInstance, configUser) {
     super(sliderInstance, configUser, 'thumbnail/slider');
 
-    this.thumbnailWrapper.classList.add('bgsl-thumbnail-slider');
+    this.thumbnailWrapper.classList.add('minyatur-thumbnail-slider');
 
     this.thumbnailContainer = document.createElement('div');
     this.thumbnailContainer.style.overflow = 'hidden';
@@ -116,11 +116,11 @@ class Slider extends Thumbnail {
     this.thumbnailList.addEventListener('touchend', this._touchEnd);
 
     this.thumbnailBackwardButton = document.createElement('div');
-    this.thumbnailBackwardButton.classList.add('bgsl-thumbnail-slider-backward-button');
+    this.thumbnailBackwardButton.classList.add('minyatur-thumbnail-slider-backward-button');
     this.thumbnailContainer.appendChild(this.thumbnailBackwardButton);
 
     this.thumbnailForwardButton = document.createElement('div');
-    this.thumbnailForwardButton.classList.add('bgsl-thumbnail-slider-forward-button');
+    this.thumbnailForwardButton.classList.add('minyatur-thumbnail-slider-forward-button');
     this.thumbnailContainer.appendChild(this.thumbnailForwardButton);
 
     this._slideBackward = this.slideBackward.bind(this);
@@ -373,7 +373,7 @@ class Basic extends Thumbnail {
   constructor(sliderInstance, configUser) {
     super(sliderInstance, configUser, 'thumbnail/basic');
 
-    this.thumbnailWrapper.classList.add('bgsl-thumbnail-basic');
+    this.thumbnailWrapper.classList.add('minyatur-thumbnail-basic');
 
     this.thumbnailList = document.createElement('ul');
     this.thumbnailList.positionX = 0;
@@ -402,7 +402,7 @@ class Dot extends Thumbnail {
   constructor(sliderInstance, configUser) {
     super(sliderInstance, configUser, 'thumbnail/dot');
 
-    this.thumbnailWrapper.classList.add('bgsl-thumbnail-dot');
+    this.thumbnailWrapper.classList.add('minyatur-thumbnail-dot');
 
     this.thumbnailList = document.createElement('ul');
     this.thumbnailWrapper.appendChild(this.thumbnailList);
