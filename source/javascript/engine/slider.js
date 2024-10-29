@@ -1,5 +1,5 @@
-import Event from '../../../../buga-kit/source/javascript/library/event';
-import ItemMessage from '/var/www/html/actipro/buga-kit/source/javascript/library/message';
+import Event from '../../../../sadrazam/source/javascript/library/event';
+import ItemMessage from '/var/www/html/actipro/sadrazam/source/javascript/library/message';
 import Language from '../language/language';
 
 import _config from '../config';
