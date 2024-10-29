@@ -8,10 +8,15 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // ProjectBaseFolder
 const context = path.join(__dirname, '..');
 
-const sourceMap = {
-  'minyatur.js': path.join(context, 'source/javascript/minyatur.js'),
+const javascriptSourceMap = {
+  'minyatur.js': path.join(context, 'source/javascript/minyatur.js')
+};
+
+const styleSourceMap = {
   'minyatur.junk': path.join(context, 'source/stylesheet/minyatur.scss')
 };
+
+const sourceMap = { ...javascriptSourceMap, ...styleSourceMap };
 
 const eslintOptions = {
   context,
