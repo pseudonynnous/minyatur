@@ -33,11 +33,18 @@ const JunkExtensionFilesRemoverAfterCompile = function() {
     if (compiler.hooks && compiler.hooks.done) {
       compiler.hooks.done.tap('webpack-arbitrary-code', () => {
         Object.keys(styleSourceMap).forEach(key => {
-          const sourcePath = path.join(context, 'public', key);
+          const destination = [
+            'public',
+            'build'
+          ];
 
-          if (path.extname(sourcePath) == '.junk') {
-            fs.unlink(path.join(context, 'public', key), () => {});
-          }
+          destination.forEach(value => {
+            const sourcePath = path.join(context, value, key);
+
+            if (path.extname(sourcePath) == '.junk') {
+              fs.unlink(path.join(context, value, key), () => {});
+            }
+          });
         });
       });
     }
