@@ -137,6 +137,7 @@ composer.phar
 public/include/composer
 
 # Personal
+package-lock.json
 .gelistirme_notlari
 
 
