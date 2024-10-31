@@ -15,16 +15,16 @@ module.exports = merge(common, {
     devMiddleware: {
       // index: true,
       // mimeTypes: { "text/html": ["phtml"] },
-      publicPath: '/build'
+      publicPath: '/instant-compiled-folder'
       // serverSideRender: true,
       // writeToDisk: true,
     },
     watchFiles: [
-      path.join(common.context, 'source'),
+      path.join(common.context, 'source')
       /* path.join(projectBaseFolder, 'public/include'),
       path.join(projectBaseFolder, 'source'),
       path.join(projectBaseFolder, '../source') */
-      ],
+    ],
     /* allowedHosts: [
       'local-dkn'
       ], */
@@ -50,9 +50,15 @@ module.exports = merge(common, {
     port: 9000,
     server: 'https',
     webSocketServer: 'sockjs',
-    static: {
-      directory: path.join(common.context, 'build'),
-    },
+    // Açılacak index.html'in aradığı klasör
+    static: [
+      { directory: path.join(common.context, 'build') },
+      { directory: path.join(common.context, 'assests') }
+    ],
+    // Ana klasörde index bulamazsa buraya bakıyor. Yani index.html konumu.
+    /* historyApiFallback: {
+      index: '/build/index.html'
+    }, */
     // inline: false,
     client: {
       overlay: {

@@ -4,8 +4,12 @@ import Language from '../language/language';
 
 import _config from '../config';
 
+// eslint-disable-next-line
+import defaultStyle from '!!css-loader?{"sourceMap":false,"exportType":"string"}!sass-loader?{"api":"modern"}!../../stylesheet/minyatur.scss';
+
 class Slider {
   constructor(configObject = {}, sliderDataObject = []) {
+    // Variables
     this.language = Language;
 
     this.activeIndex = 0;
@@ -13,12 +17,30 @@ class Slider {
 
     this.configObject = { ..._config };
 
+    // Overwrite user settings over default settings
     Object.keys(this.configObject).forEach(key => {
       if (Object.prototype.hasOwnProperty.call(configObject, key)) {
         this.configObject[key] = configObject[key];
       }
     });
 
+    // Insert default style first
+    if (this.configObject.styleAutoload) {
+      if (typeof window === 'object' && typeof window.document === 'object') {
+        const styleElement = document.createElement('style');
+        styleElement.setAttribute('type', 'text/css');
+        styleElement.classList.add('minyatur-default-style');
+        styleElement.innerHTML = defaultStyle;
+
+        window.document.head.appendChild(styleElement);
+
+      // does not appear to be a browser environment
+      } else {
+      // throw new Error('This code is only meant to run in a browser environment');
+      }
+    }
+
+    // Generate main container
     this.mainContainer = document.getElementById(this.configObject.id);
     this.mainContainer.classList.add('minyatur');
     this.mainContainer.__minyatur = this;
@@ -29,6 +51,7 @@ class Slider {
       return;
     }
 
+    // Slider items
     this.sliderDataObject = sliderDataObject;
     if (!this.sliderDataObject.length) {
       const sliderImages = this.mainContainer.firstElementChild.children;
@@ -44,23 +67,25 @@ class Slider {
       });
     }
 
+    // Empty the main container
     while (this.mainContainer.firstChild) {
       this.mainContainer.removeChild(this.mainContainer.lastChild);
     }
 
+    // BroadWrapper, holder for slider items
     this.boardWrapper = document.createElement('div');
     this.boardWrapper.classList.add('minyatur-board');
     this.boardWrapper.style.visibility = 'hidden';
     this.mainContainer.appendChild(this.boardWrapper);
 
-    // AspectRatio ve genişlik ve yükseklikle ilgili ilişkilerin kurulması. config: aspectRatio, maxWidth, maxHeight
+    // AspectRatio and width and height related settings.
     this.boardListContainer = document.createElement('div');
     this.boardListContainer.classList.add('minyatur-board-list-container');
     this.boardListContainer.style.overflow = 'hidden';
     this.boardListContainer.style.height = '0';
     this.boardWrapper.appendChild(this.boardListContainer);
 
-    // BoardContainer'ı child olarak ekledikten sonra ölçü propertyleri değer döndüğü için slider'ın ratioPercent, maxWidth, maxHeight gibi değerler burada hesaplanıp değerlendiriliyor.
+    // Since the measurement properties return values after adding the BoardContainer as a child, values such as ratioPercent, maxWidth, maxHeight of the slider are calculated and evaluated here.
     if (this.configObject.maxWidth != null) {
       this.boardWrapper.style.maxWidth = this.configObject.maxWidth;
     }
@@ -69,8 +94,8 @@ class Slider {
 
     this._boardListContainerCalculateHeight = this.boardListContainerCalculateHeight.bind(this);
     window.addEventListener('resize', this._boardListContainerCalculateHeight);
-    // Değerlendirme burada bitiyor.
 
+    // Generate boardlist
     this.boardList = document.createElement('ul');
     this.boardList.positionX = 0;
     this.boardList.addEventListener('transitionstart', () => {
@@ -82,8 +107,10 @@ class Slider {
 
     this.boardListContainer.appendChild(this.boardList);
 
+    // We assign it to different variables for practical access
     this.boardItems = this.boardList.children;
 
+    // Inject items to the board
     this.sliderDataObject.forEach(item => {
       const boardListItem = document.createElement('li');
       this.boardList.appendChild(boardListItem);
@@ -100,6 +127,7 @@ class Slider {
       }
     });
 
+    // Add events
     this._touchStart = this.touchStart.bind(this);
     this.boardListContainer.addEventListener('touchstart', this._touchStart);
 
@@ -113,6 +141,7 @@ class Slider {
     this._resizeBoardListPositionX = this.resizeBoardListPositionX.bind(this);
     window.addEventListener('resize', this._resizeBoardListPositionX);
 
+    // Access to the modules then initialize
     this.modules = new Set();
     Object.keys(this.configObject.module).forEach(key => {
       try {
@@ -140,8 +169,10 @@ class Slider {
       }
     });
 
+    // Set start index
     this.insertItem(this.configObject.startSlideIndex, { transition: false });
 
+    // Finally make the slider visible
     this.boardWrapper.style.visibility = null;
   }
 
