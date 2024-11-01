@@ -1,7 +1,7 @@
 const path = require('path');
 const glob = require('glob');
 const fs = require('fs');
-// const rimraf = require('rimraf');
+
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 

@@ -1,4 +1,3 @@
-import Event from '../../../../sadrazam/source/javascript/library/event';
 import ItemMessage from '/var/www/html/actipro/sadrazam/source/javascript/library/message';
 import Language from '../language/language';
 
@@ -26,18 +25,12 @@ class Slider {
 
     // Insert default style first
     if (this.configObject.styleAutoload) {
-      if (typeof window === 'object' && typeof window.document === 'object') {
-        const styleElement = document.createElement('style');
-        styleElement.setAttribute('type', 'text/css');
-        styleElement.classList.add('minyatur-default-style');
-        styleElement.innerHTML = defaultStyle;
+      const styleElement = document.createElement('style');
+      styleElement.setAttribute('type', 'text/css');
+      styleElement.classList.add('minyatur-default-style');
+      styleElement.innerHTML = defaultStyle;
 
-        window.document.head.appendChild(styleElement);
-
-      // does not appear to be a browser environment
-      } else {
-      // throw new Error('This code is only meant to run in a browser environment');
-      }
+      window.document.head.appendChild(styleElement);
     }
 
     // Generate main container
@@ -409,7 +402,7 @@ class Slider {
       return;
     }
 
-    const target = Event.getTarget(event);
+    const target = event.target;
 
     if ((target.parentNode.parentNode.offsetWidth / this.configObject.touchChangeCoefficient) <= Math.abs(this.touchPositionData.touchXDiff) && (this.touchPositionData.touchXDiff < 0)) {
       this.nextItem('touch');

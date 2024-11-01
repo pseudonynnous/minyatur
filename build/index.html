@@ -31,8 +31,13 @@
 		if (document.getElementById('slider-example')) {
 			const sliderOptions = {
 				id: 'slider-example',
-				thumbnail: {
-					type: 'dot',
+				module: {
+					'thumbnail/dot': { 
+						id: 'thumbnail-example', 
+						transitionSpeed: 100
+					},
+					fullscreen: true,
+					control: {}
 				}
 			};
 

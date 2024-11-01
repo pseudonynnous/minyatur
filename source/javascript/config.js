@@ -10,7 +10,7 @@ const config = {
   infinityAction: false, // Infinity loop.
   startSlideIndex: 0, // The number of the image selected by default. The first image is number 1.
   touchChangeCoefficient: 15, // A feature that indicates that on touch screens, the image will switch to the next image the more it is scrolled.
-  styleAutoload: true, // If the working environment is a browser, default styles are added automatically. If you want to add your own style, this field must be false.
+  styleAutoload: true, // Default styles are added to <head> automatically. If you want to add your own css, this field must be false.
   module: {
     'thumbnail/slider': { // dot, basic, slider
       id: 'thumbnail-example', // Target ID, this element must contain items for sliding.

@@ -46,14 +46,14 @@ class Zoom {
     this.sizingResult();
     this.sizingLens();
 
-    /* Calculate the ratio between result DIV and lens: */
+    // Calculate the ratio between result DIV and lens:
     this.cx = this.result.offsetWidth / this.lens.offsetWidth;
     this.cy = this.result.offsetHeight / this.lens.offsetHeight;
 
-    /* Set background properties for the result DIV */
+    // Set background properties for the result DIV
     this.result.style.backgroundSize = `${this.getRenderedSize().width * this.cx}px ${this.getRenderedSize().height * this.cy}px`;
 
-    /* Execute a function when someone moves the cursor over the image, or the lens: */
+    // Execute a function when someone moves the cursor over the image, or the lens:
     this._moveLens = this.moveLens.bind(this);
     this.sliderInstance.boardWrapper.addEventListener('mousemove', this._moveLens);
   }
@@ -79,31 +79,31 @@ class Zoom {
       correctionY = 0;
     }
 
-    /* Prevent any other actions that may occur when moving over the image */
+    // Prevent any other actions that may occur when moving over the image
     e.preventDefault();
 
-    /* Get the cursor's x and y positions: */
+    // Get the cursor's x and y positions:
     const pos = this.getCursorPos(e);
 
-    /* Calculate the position of the lens: */
+    // Calculate the position of the lens:
     x = pos.x - (this.lens.offsetWidth / 2);
     y = pos.y - (this.lens.offsetHeight / 2);
 
-    /* Prevent the lens from being positioned outside the image: */
+    // Prevent the lens from being positioned outside the image:
     if (x > this.sliderInstance.boardWrapper.offsetWidth - this.lens.offsetWidth - correctionX) { x = this.sliderInstance.boardWrapper.offsetWidth - this.lens.offsetWidth - correctionX; }
     if (x < correctionX) { x = correctionX; }
     if (y > this.sliderInstance.boardWrapper.offsetHeight - this.lens.offsetHeight - correctionY) { y = this.sliderInstance.boardWrapper.offsetHeight - this.lens.offsetHeight - correctionY; }
     if (y < correctionY) { y = correctionY; }
 
-    /* Set the position of the lens: */
+    // Set the position of the lens:
     this.lens.style.left = x + 'px';
     this.lens.style.top = y + 'px';
 
-    /* If image small than container, center the image also in result, because image centered at slider */
+    // If image small than container, center the image also in result, because image centered at slider
     const xCentDif = (this.sliderInstance.boardWrapper.clientWidth - this.getRenderedSize().width) / 2 * this.cx;
     const yCentDif = (this.sliderInstance.boardWrapper.clientHeight - this.getRenderedSize().height) / 2 * this.cy;
 
-    /* Display what the lens "sees": */
+    // Display what the lens "sees":
     this.result.style.backgroundPosition = `${xCentDif - (x * this.cx)}px ${yCentDif - (y * this.cy)}px`;
 
     this.result.style.visibility = 'visible';
@@ -116,14 +116,14 @@ class Zoom {
 
     e = e || window.event;
 
-    /* Get the x and y positions of the image: */
+    // Get the x and y positions of the image:
     const a = this.sliderInstance.boardWrapper.getBoundingClientRect();
 
-    /* Calculate the cursor's x and y coordinates, relative to the image: */
+    // Calculate the cursor's x and y coordinates, relative to the image:
     x = e.pageX - a.left;
     y = e.pageY - a.top;
 
-    /* Consider any page scrolling: */
+    // Consider any page scrolling:
     x = x - window.pageXOffset;
     y = y - window.pageYOffset;
 

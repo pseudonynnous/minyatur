@@ -126,8 +126,9 @@ class Fullscreen {
   }
 
   imageDoubleTapHandler(event) {
+    // Önce bir parmak koyup daha sonra ikinci parmağı koyunca da çift tıklama olarak algılamaması için.
     if (event.touches.length > 1) {
-      return; // Önce bir parmak koyup daha sonra ikinci parmağı koyunca da çift tıklama olarak algılamaması için.
+      return;
     }
 
     if (this.tapped) {
