@@ -11,6 +11,7 @@ const config = {
   startSlideIndex: 0, // The number of the image selected by default. The first image is number 1.
   touchChangeCoefficient: 15, // A feature that indicates that on touch screens, the image will switch to the next image the more it is scrolled.
   styleAutoload: true, // Default styles are added to <head> automatically. If you want to add your own css, this field must be false.
+  languageCode: 'tr', // Language code
   module: {
     'thumbnail/slider': { // dot, basic, slider
       id: 'thumbnail-example', // Target ID, this element must contain items for sliding.

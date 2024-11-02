@@ -1,16 +1,13 @@
-import ItemMessage from '/var/www/html/actipro/sadrazam/source/javascript/library/message';
-import Language from '../language/language';
+import ItemMessage from '/var/www/html/actipro/sadrazam/source/javascript/library/message.js';
+import Language from '../language/language.js';
 
-import _config from '../config';
+import _config from '../config.js';
 
 // eslint-disable-next-line
 import defaultStyle from '!!css-loader?{"sourceMap":false,"exportType":"string"}!sass-loader?{"api":"modern"}!../../stylesheet/minyatur.scss';
 
 class Slider {
   constructor(configObject = {}, sliderDataObject = []) {
-    // Variables
-    this.language = Language;
-
     this.activeIndex = 0;
     this.boardListOnTransition = null;
 
@@ -22,6 +19,10 @@ class Slider {
         this.configObject[key] = configObject[key];
       }
     });
+
+    // Variables
+    Language.load(this.configObject.languageCode);
+    this.language = Language;
 
     // Insert default style first
     if (this.configObject.styleAutoload) {

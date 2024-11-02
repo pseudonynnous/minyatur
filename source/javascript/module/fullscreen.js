@@ -14,7 +14,6 @@ class Fullscreen {
     this.wrapper = document.createElement('div');
     this.wrapper.id = this.containerId;
     this.wrapper.classList.add('minyatur-fullscreen-wrapper');
-    this.wrapper.style = 'position: fixed; width: 100%; height: 100%; background-color: white; top: 0; left: 0; z-index: 9999';
 
     this.wrapper.addEventListener('dblclick', event => event.preventDefault());
     this.wrapper.addEventListener('click', event => event.preventDefault());
@@ -23,35 +22,34 @@ class Fullscreen {
     this.wrapper.addEventListener('touchend', event => event.preventDefault());
 
     this.closeButtonContainer = document.createElement('div');
-    this.closeButtonContainer.style = 'position: fixed; width: 96%; margin: 15px 4%;';
+    this.closeButtonContainer.classList.add('mfw-close-button-container');
     this.wrapper.appendChild(this.closeButtonContainer);
 
     this._hide = this.hide.bind(this);
-    this.closeButtonContainer.addEventListener('touchstart', this._hide, false);
-    this.closeButtonContainer.addEventListener('click', this._hide, false);
 
     this.closeButton = document.createElement('button');
-    this.closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i> Çıkış';
+    this.closeButton.innerHTML = `<i class="fa-solid fa-xmark"></i> ${this.sliderInstance.language.get('close')}`;
+    this.closeButton.addEventListener('touchstart', this._hide, false);
+    this.closeButton.addEventListener('click', this._hide, false);
     // this.closeButton.innerHTML = `<i class="fa-solid fa-xmark"></i> ${this.language.get('close')}`;
-    this.closeButton.style = 'background-color: white; border: 1px solid #ccc; border-radius: 2px; padding: 7px 14px; font-size: 15px; font-weight: 600';
     this.closeButtonContainer.appendChild(this.closeButton);
 
     this.imageWrapper = document.createElement('div');
-    this.imageWrapper.style = 'position: absolte; width: 100%; height: 100%; top: 0; left: 0; padding: 60px 4% 4% 4%; box-sizing: border-box';
+    this.imageWrapper.classList.add('mfw-image-wrapper');
     this.wrapper.appendChild(this.imageWrapper);
 
     this.imageContainer = document.createElement('div');
-    this.imageContainer.style = 'position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center;';
+    this.imageContainer.classList.add('mfw-image-container');
     // this.wrapper.appendChild(this.imageContainer);
     this.imageWrapper.appendChild(this.imageContainer);
 
     this.imageDiv = document.createElement('div');
-    this.imageDiv.style = 'margin: 0 auto; position: relative;';
+    this.imageDiv.classList.add('nfw-image-item');
     // this.wrapper.appendChild(this.imageContainer);
     this.imageContainer.appendChild(this.imageDiv);
 
     this.imageElem = document.createElement('img');
-    this.imageElem.style = 'display: block; margin: 0 auto; max-width: 100%;';
+    this.imageElem.classList.add('nfw-image');
     this.imageElem.style.transform = null;
     this.imageDiv.appendChild(this.imageElem);
 
@@ -91,11 +89,11 @@ class Fullscreen {
     this.positionX = 0;
     this.positionY = 0;
 
-    window.document.getElementById(this.containerId).style.display = null;
+    this.wrapper.classList.remove('hidden');
   }
 
   hide(event) {
-    window.document.getElementById(this.containerId).style.display = 'none';
+    this.wrapper.classList.add('hidden');
   }
 
   zoomToggle(event) {
@@ -104,8 +102,14 @@ class Fullscreen {
 
     if (this.scale == null || this.scale > 1) {
       this.scale = 1;
+
+      this.imageElem.classList.remove('nfw-zoom-in');
+      this.imageElem.classList.add('nfw-zoom-out');
     } else {
       this.scale = 2;
+
+      this.imageElem.classList.remove('nfw-zoom-out');
+      this.imageElem.classList.add('nfw-zoom-in');
     }
 
     this.positionX = 0;
@@ -147,6 +151,7 @@ class Fullscreen {
   }
 
   imageMouseMoveHandler(event) {
+    // https://codepen.io/pseudonymousUser/pen/poMKRag
     const imageContainerRect = this.imageContainer.getBoundingClientRect();
     const imageElemRect = this.imageElem.getBoundingClientRect();
 

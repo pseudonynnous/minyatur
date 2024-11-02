@@ -1,5 +1,5 @@
 const lang = {
-  close: 'Kapat'
+  close: 'Close'
 };
 
 export default lang;

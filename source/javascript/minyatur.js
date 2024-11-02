@@ -1,3 +1,3 @@
-import Slider from './engine/slider';
+import Slider from './engine/slider.js';
 
 window.Minyatur = Slider;

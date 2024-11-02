@@ -1,9 +1,20 @@
-import defaultWords from './tr';
-
 class Language {
-  static load(translations) {
-    Object.entries(translations).forEach(elem => {
-      this.set(elem[0], elem[1]);
+  static words = new Map();
+  static defaultLanguageCode = 'en';
+
+  static load(languageCode) {
+    import(`./${languageCode}.js`).then(exportedModule => {
+      const translationObject = exportedModule.default;
+
+      this.setAll(translationObject);
+    }).catch(error => {
+      console.warn(error);
+
+      import(`./${this.defaultLanguageCode}.js`).then(exportedModule => {
+        const translationObject = exportedModule.default;
+
+        this.setAll(translationObject);
+      });
     });
   }
 
@@ -19,13 +30,16 @@ class Language {
     return Language.words.set(key, value);
   }
 
+  static setAll(translationObject) {
+    Object.entries(translationObject).forEach(elem => {
+      this.set(elem[0], elem[1]);
+    });
+  }
+
   static delete(key) {
     return Language.words.delete(key);
   }
 }
-Language.words = new Map();
-
-Language.load(defaultWords);
 
 if (window.lang != null) {
   Language.load(window.lang);
