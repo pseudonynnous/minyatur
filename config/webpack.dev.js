@@ -7,7 +7,8 @@ module.exports = merge(common, {
   output: {
     // relative to config folder
     filename: '[name]',
-    path: path.join(common.context, 'build')
+    path: path.join(common.context, 'build'),
+    chunkFormat: false
     // publicPath eklemezsek tarayıcıda sorun veriyor: 'Automatic publicPath is not supported in this browser';
     // publicPath: path.join(context, 'public'),
   },
@@ -53,7 +54,7 @@ module.exports = merge(common, {
     // Açılacak index.html'in aradığı klasör
     static: [
       { directory: path.join(common.context, 'build') },
-      { directory: path.join(common.context, 'assests') }
+      { directory: path.join(common.context, 'site/assests') }
     ],
     // Ana klasörde index bulamazsa buraya bakıyor. Yani index.html konumu.
     /* historyApiFallback: {

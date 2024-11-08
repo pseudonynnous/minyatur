@@ -123,10 +123,12 @@ class Slider {
 
     // Add events
     this._touchStart = this.touchStart.bind(this);
-    this.boardListContainer.addEventListener('touchstart', this._touchStart);
+    // https://chromestatus.com/feature/5745543795965952
+    this.boardListContainer.addEventListener('touchstart', this._touchStart, { passive: true });
 
     this._touchMove = this.touchMove.bind(this);
-    this.boardListContainer.addEventListener('touchmove', this._touchMove);
+    // https://chromestatus.com/feature/5745543795965952
+    this.boardListContainer.addEventListener('touchmove', this._touchMove, { passive: true });
 
     this._touchEnd = this.touchEnd.bind(this);
     this.boardListContainer.addEventListener('touchend', this._touchEnd);
@@ -138,19 +140,19 @@ class Slider {
     // Access to the modules then initialize
     this.modules = new Set();
     Object.keys(this.configObject.module).forEach(key => {
-      try {
-        const splitedPath = key.split('/');
+      const splitedPath = key.split('/');
 
-        let _class;
-        // If path length bigger than 2 means path contains class name. So must get class name.
-        if (splitedPath.length > 1) {
-          // Pop last element of array, last element class name.
-          _class = splitedPath.pop();
-          // Uppercase first letter because of class names start with uppercase.
-          _class = `${_class[0].toUpperCase()}${_class.slice(1)}`;
-        }
+      let _class;
+      // If path length bigger than 2 means path contains class name. So must get class name.
+      if (splitedPath.length > 1) {
+        // Pop last element of array, last element class name.
+        _class = splitedPath.pop();
+        // Uppercase first letter because of class names start with uppercase.
+        _class = `${_class[0].toUpperCase()}${_class.slice(1)}`;
+      }
 
-        const Module = require(`../module/${splitedPath.join('/')}`)[_class == null ? 'default' : _class];
+      import(`../module/${splitedPath.join('/')}`).then(exportedModule => {
+        const Module = _class != null ? exportedModule[_class] : exportedModule.default;
 
         const ModuleInstance = new Module(this, this.configObject.module[key]);
         this.modules.add(ModuleInstance);
@@ -158,9 +160,9 @@ class Slider {
         if (ModuleInstance.append) {
           ModuleInstance.append();
         }
-      } catch (err) {
-        console.warn(err);
-      }
+      }).catch(error => {
+        console.warn(error);
+      });
     });
 
     // Set start index
@@ -384,7 +386,7 @@ class Slider {
     if (this.touchPositionData.type === 'vertical') {
       this.boardListPositionX = this.touchPositionData.touchStartBoardListPositionX + this.touchPositionData.touchXDiff;
 
-      event.preventDefault();
+      // event.preventDefault();
 
       return false;
     }

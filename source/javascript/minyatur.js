@@ -1,3 +1,6 @@
-import Slider from './engine/slider.js';
+const Minyatur = require('./engine/slider.js').default;
 
-window.Minyatur = Slider;
+globalThis.Minyatur = Minyatur;
+
+// https://stackoverflow.com/questions/35971042/how-to-correctly-use-es6-export-default-with-commonjs-require
+module.exports = Minyatur;

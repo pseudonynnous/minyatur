@@ -78,7 +78,6 @@ module.exports = {
     {
       test: /\.scss$/,
       exclude: /node_modules/,
-      type: 'asset/resource',
       use: [
         MiniCssExtractPlugin.loader,
         'css-loader',

@@ -96,8 +96,8 @@ class Zoom {
     if (y < correctionY) { y = correctionY; }
 
     // Set the position of the lens:
-    this.lens.style.left = x + 'px';
-    this.lens.style.top = y + 'px';
+    this.lens.style.left = `${x}px`;
+    this.lens.style.top = `${y}px`;
 
     // If image small than container, center the image also in result, because image centered at slider
     const xCentDif = (this.sliderInstance.boardWrapper.clientWidth - this.getRenderedSize().width) / 2 * this.cx;
@@ -174,8 +174,8 @@ class Zoom {
       const resultWidth = Math.min(this.activeImage.naturalWidth, zoomResultContainer.offsetWidth);
       const resultHeight = Math.min(this.activeImage.naturalHeight, zoomResultContainer.offsetHeight);
 
-      this.result.style.width = resultWidth + 'px';
-      this.result.style.height = resultHeight + 'px';
+      this.result.style.width = `${resultWidth}px`;
+      this.result.style.height = `${resultHeight}px`;
     } else {
       this.activeImageContainer.appendChild(this.result);
     }
@@ -187,8 +187,8 @@ class Zoom {
     const lensWidth = this.getRenderedSize().width / this.activeImage.naturalWidth * this.result.offsetWidth;
     const lensHeight = this.getRenderedSize().height / this.activeImage.naturalHeight * this.result.offsetHeight;
 
-    this.lens.style.width = lensWidth + 'px';
-    this.lens.style.height = lensHeight + 'px';
+    this.lens.style.width = `${lensWidth}px`;
+    this.lens.style.height = `${lensHeight}px`;
   }
 }
 

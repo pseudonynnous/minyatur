@@ -41,8 +41,8 @@ class Language {
   }
 }
 
-if (window.lang != null) {
-  Language.load(window.lang);
+if (globalThis.lang != null) {
+  Language.load(globalThis.lang);
 }
 
 export default Language;
