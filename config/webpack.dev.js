@@ -5,11 +5,12 @@ const common = require('./webpack.common.js');
 module.exports = merge(common, {
   mode: 'development',
   output: {
-    // relative to config folder
+    // relative to config folder.
     filename: '[name]',
     path: path.join(common.context, 'build'),
+     // so that modules are not extracted as separate files.
     chunkFormat: false
-    // publicPath eklemezsek tarayıcıda sorun veriyor: 'Automatic publicPath is not supported in this browser';
+    // if we do not add publicPath, it gives problems in the browser: 'Automatic publicPath is not supported in this browser'.
     // publicPath: path.join(context, 'public'),
   },
   devServer: {
@@ -29,7 +30,7 @@ module.exports = merge(common, {
     /* allowedHosts: [
       'local-dkn'
       ], */
-    // Bunu yapmazsak CORS hatası veriyor. yukarıdaki adresten erişemiyoruz, sayfayı yenilemiyor.
+    // if we do not do this, it gives a CORS error. We cannot access the address above, it does not refresh the page.
     headers: {
       'Access-Control-Allow-Origin': '*'
       // "Access-Control-Allow-Methods": "GET",
@@ -46,17 +47,17 @@ module.exports = merge(common, {
         // arguments: [""],
       }
     },
-    // 0.0.0.0 dışarıdan da ulaşılabiliyor. sadece localhost yazarsak hayır.
+    // when you enter 0.0.0.0, it can be accessed from outside. If we only write localhost, then no.
     host: '0.0.0.0',
     port: 9000,
     server: 'https',
     webSocketServer: 'sockjs',
-    // Açılacak index.html'in aradığı klasör
+    // the folder that the first index.html is looking for
     static: [
       { directory: path.join(common.context, 'build') },
       { directory: path.join(common.context, 'site/assests') }
     ],
-    // Ana klasörde index bulamazsa buraya bakıyor. Yani index.html konumu.
+    // if it can't find an index in the main folder, it looks here. That is, the index.html location.
     /* historyApiFallback: {
       index: '/build/index.html'
     }, */
