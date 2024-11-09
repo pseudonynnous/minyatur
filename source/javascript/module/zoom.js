@@ -6,7 +6,7 @@ class Zoom {
     this.configObject = { ..._config.module.zoom };
 
     Object.keys(this.configObject).forEach(key => {
-      if (Object.prototype.hasOwnProperty.call(configUser, key)) {
+      if (Object.hasOwn(configUser, key)) {
         this.configObject[key] = configUser[key];
       }
     });

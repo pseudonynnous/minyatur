@@ -23,7 +23,7 @@ class Thumbnail {
     this.configObject = { ..._config.module[path] };
 
     Object.keys(this.configObject).forEach(key => {
-      if (Object.prototype.hasOwnProperty.call(configUser, key)) {
+      if (Object.hasOwn(configUser, key)) {
         this.configObject[key] = configUser[key];
       }
     });

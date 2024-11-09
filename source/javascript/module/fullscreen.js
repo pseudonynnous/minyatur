@@ -151,7 +151,7 @@ class Fullscreen {
   }
 
   imageMouseMoveHandler(event) {
-    // https://codepen.io/pseudonymousUser/pen/poMKRag
+    // https://codepen.io/pseudonynnous/pen/poMKRag
     const imageContainerRect = this.imageContainer.getBoundingClientRect();
     const imageElemRect = this.imageElem.getBoundingClientRect();
 

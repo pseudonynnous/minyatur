@@ -7,7 +7,7 @@ import _config from '../config.js';
 import defaultStyle from '!!css-loader?{"sourceMap":false,"exportType":"string"}!sass-loader?{"api":"modern"}!../../stylesheet/minyatur.scss';
 
 class Slider {
-  constructor(configObject = {}, sliderDataObject = []) {
+  constructor(configUser = {}, sliderDataObject = []) {
     this.activeIndex = 0;
     this.boardListOnTransition = null;
 
@@ -15,8 +15,8 @@ class Slider {
 
     // Overwrite user settings over default settings
     Object.keys(this.configObject).forEach(key => {
-      if (Object.prototype.hasOwnProperty.call(configObject, key)) {
-        this.configObject[key] = configObject[key];
+      if (Object.hasOwn(configUser, key)) {
+        this.configObject[key] = configUser[key];
       }
     });
 
