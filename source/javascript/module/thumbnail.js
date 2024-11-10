@@ -73,6 +73,74 @@ class Thumbnail {
   }
 }
 
+class Basic extends Thumbnail {
+  constructor(sliderInstance, configUser) {
+    super(sliderInstance, configUser, 'thumbnail/basic');
+
+    this.thumbnailWrapper.classList.add('minyatur-thumbnail-basic');
+
+    this.thumbnailList = document.createElement('ul');
+    this.thumbnailList.positionX = 0;
+    this.thumbnailWrapper.appendChild(this.thumbnailList);
+
+    this.thumbnailItems = this.thumbnailList.children;
+
+    [].forEach.call(this.sliderInstance.boardItems, sliderItem => {
+      const thumbnailListItem = document.createElement('li');
+      this.thumbnailList.appendChild(thumbnailListItem);
+
+      let thumbnailListItemContent;
+
+      console.log(sliderItem);
+
+      if (sliderItem.firstElementChild.tagName.toLowerCase() === 'img') {
+        thumbnailListItemContent = document.createElement('img');
+        thumbnailListItemContent.src = sliderItem.querySelector('img').src;
+
+        thumbnailListItem.appendChild(thumbnailListItemContent);
+      }
+
+      if (sliderItem.firstElementChild.tagName.toLowerCase() === 'div') {
+        thumbnailListItemContent = document.createElement('iframe');
+        thumbnailListItemContent.style.width = '100%';
+        thumbnailListItemContent.style.height = '100%';
+        thumbnailListItemContent.style.border = 'none';
+        thumbnailListItemContent.zIndex = '-1';
+        thumbnailListItemContent.srcdoc = `<html style="width: 100%; height: 100%; margin: 0; padding: 0; border: 0"><body style="width: 100%; height: 100%; margin: 0; padding: 0; border: 0">${sliderItem.firstElementChild.outerHTML}</body></html>`;
+
+        thumbnailListItem.appendChild(thumbnailListItemContent);
+      }
+
+      this._clickHandler = this.clickHandler.bind(this, thumbnailListItem);
+      thumbnailListItem.addEventListener('click', this._clickHandler);
+    });
+
+    return this;
+  }
+}
+
+class Dot extends Thumbnail {
+  constructor(sliderInstance, configUser) {
+    super(sliderInstance, configUser, 'thumbnail/dot');
+
+    this.thumbnailWrapper.classList.add('minyatur-thumbnail-dot');
+
+    this.thumbnailList = document.createElement('ul');
+    this.thumbnailWrapper.appendChild(this.thumbnailList);
+
+    this.thumbnailItems = this.thumbnailList.children;
+
+    [].forEach.call(this.sliderInstance.boardItems, () => {
+      const thumbnailItem = document.createElement('li');
+
+      this._clickHandler = this.clickHandler.bind(this, thumbnailItem);
+      thumbnailItem.addEventListener('click', this._clickHandler);
+
+      this.thumbnailList.appendChild(thumbnailItem);
+    });
+  }
+}
+
 class Slider extends Thumbnail {
   constructor(sliderInstance, configUser) {
     super(sliderInstance, configUser, 'thumbnail/slider');
@@ -366,57 +434,6 @@ class Slider extends Thumbnail {
     if (this.thumbnailList.scrollWidth > this.thumbnailList.clientWidth && Math.abs(this.thumbnailList.clientWidth - this.thumbnailListPositionX) > this.thumbnailList.scrollWidth) {
       this.thumbnailListPositionX = -Math.abs(this.thumbnailList.clientWidth - this.thumbnailList.scrollWidth);
     }
-  }
-}
-
-class Basic extends Thumbnail {
-  constructor(sliderInstance, configUser) {
-    super(sliderInstance, configUser, 'thumbnail/basic');
-
-    this.thumbnailWrapper.classList.add('minyatur-thumbnail-basic');
-
-    this.thumbnailList = document.createElement('ul');
-    this.thumbnailList.positionX = 0;
-    this.thumbnailWrapper.appendChild(this.thumbnailList);
-
-    this.thumbnailItems = this.thumbnailList.children;
-
-    [].forEach.call(this.sliderInstance.boardItems, sliderItem => {
-      const thumbnailListItem = document.createElement('li');
-      this.thumbnailList.appendChild(thumbnailListItem);
-
-      const thumbnailListItemImageContainer = document.createElement('img');
-      thumbnailListItemImageContainer.src = sliderItem.querySelector('img').src;
-
-      this._clickHandler = this.clickHandler.bind(this, thumbnailListItem);
-      thumbnailListItem.addEventListener('click', this._clickHandler);
-
-      thumbnailListItem.appendChild(thumbnailListItemImageContainer);
-    });
-
-    return this;
-  }
-}
-
-class Dot extends Thumbnail {
-  constructor(sliderInstance, configUser) {
-    super(sliderInstance, configUser, 'thumbnail/dot');
-
-    this.thumbnailWrapper.classList.add('minyatur-thumbnail-dot');
-
-    this.thumbnailList = document.createElement('ul');
-    this.thumbnailWrapper.appendChild(this.thumbnailList);
-
-    this.thumbnailItems = this.thumbnailList.children;
-
-    [].forEach.call(this.sliderInstance.boardItems, () => {
-      const thumbnailItem = document.createElement('li');
-
-      this._clickHandler = this.clickHandler.bind(this, thumbnailItem);
-      thumbnailItem.addEventListener('click', this._clickHandler);
-
-      this.thumbnailList.appendChild(thumbnailItem);
-    });
   }
 }
 

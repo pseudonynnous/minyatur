@@ -1,29 +1,49 @@
 // import _config from '../config';
 
 class Fullscreen {
+  tagClassMapper = new Map([
+    ['img', FullscreenImage],
+    ['div', FullscreenDiv]
+  ]);
+
   constructor(sliderInstance) {
     this.sliderInstance = sliderInstance;
 
-    this._show = this.show.bind(this);
-    this.sliderInstance.boardWrapper.addEventListener('click', this._show);
+    this._eventRouter = this.eventRouter.bind(this);
+    this.sliderInstance.boardWrapper.addEventListener('click', this._eventRouter);
   }
 
-  insert() {
+  eventRouter() {
+    this.activeContentElement = this.sliderInstance.boardList.children[this.sliderInstance.activeIndex].firstElementChild;
+
+    if (!this.tagClassMapper.has(this.activeContentElement.tagName.toLowerCase())) {
+      return;
+    }
+
+    if (!this.mainWrapper) {
+      this.init();
+    }
+
+    this.show();
+  }
+
+  init() {
     this.containerId = 'id-' + Math.floor((1 + Math.random()) * 0x10 ** 10).toString(16).substring(1);
 
-    this.wrapper = document.createElement('div');
-    this.wrapper.id = this.containerId;
-    this.wrapper.classList.add('minyatur-fullscreen-wrapper');
+    this.mainWrapper = document.createElement('div');
+    this.mainWrapper.id = this.containerId;
+    this.mainWrapper.classList.add('minyatur-fullscreen-wrapper');
 
-    this.wrapper.addEventListener('dblclick', event => event.preventDefault());
-    this.wrapper.addEventListener('click', event => event.preventDefault());
-    this.wrapper.addEventListener('touchstart', event => event.preventDefault());
-    this.wrapper.addEventListener('touchmove', event => event.preventDefault());
-    this.wrapper.addEventListener('touchend', event => event.preventDefault());
+    this.mainWrapper.addEventListener('dblclick', event => event.preventDefault());
+    this.mainWrapper.addEventListener('click', event => event.preventDefault());
+    this.mainWrapper.addEventListener('touchstart', event => event.preventDefault());
+    this.mainWrapper.addEventListener('touchmove', event => event.preventDefault());
+    this.mainWrapper.addEventListener('touchend', event => event.preventDefault());
 
     this.closeButtonContainer = document.createElement('div');
     this.closeButtonContainer.classList.add('mfw-close-button-container');
-    this.wrapper.appendChild(this.closeButtonContainer);
+
+    this.mainWrapper.appendChild(this.closeButtonContainer);
 
     this._hide = this.hide.bind(this);
 
@@ -34,18 +54,106 @@ class Fullscreen {
     // this.closeButton.innerHTML = `<i class="fa-solid fa-xmark"></i> ${this.language.get('close')}`;
     this.closeButtonContainer.appendChild(this.closeButton);
 
+    document.body.appendChild(this.mainWrapper);
+  }
+
+  show() {
+    this.mainWrapper.classList.remove('hidden');
+    this.tagClassMapper.get(this.activeContentElement.tagName.toLowerCase()).getInstance(this.sliderInstance, this.mainWrapper).show();
+  }
+
+  hide() {
+    this.mainWrapper.classList.add('hidden');
+    this.tagClassMapper.get(this.activeContentElement.tagName.toLowerCase()).getInstance(this.sliderInstance, this.mainWrapper).hide();
+  }
+}
+
+class FullscreenDiv {
+  _instance = null;
+
+  constructor(sliderInstance, mainWrapper) {
+    this.sliderInstance = sliderInstance;
+    this.mainWrapper = mainWrapper;
+  }
+
+  static getInstance(sliderInstance, mainWrapper) {
+    if (!FullscreenDiv._instance) {
+      FullscreenDiv._instance = new FullscreenDiv(sliderInstance, mainWrapper);
+    }
+
+    return FullscreenDiv._instance;
+  }
+
+  init() {
+    // div wrapper
+    this.divWrapper = document.createElement('div');
+    this.divWrapper.classList.add('mfw-div-wrapper');
+
+    // div container
+    this.divContainer = document.createElement('div');
+    this.divContainer.classList.add('mfw-div-container');
+
+    this.divWrapper.appendChild(this.divContainer);
+
+    // append to root
+    this.mainWrapper.appendChild(this.divWrapper);
+  }
+
+  show() {
+    if (this.divWrapper == null) {
+      this.init();
+    }
+
+    while (this.divContainer.firstChild) {
+      this.divContainer.removeChild(this.divContainer.lastChild);
+    }
+
+    const activeContentElement = this.sliderInstance.boardList.children[this.sliderInstance.activeIndex].firstElementChild;
+    const elementClone = activeContentElement.cloneNode(true);
+
+    // aspect ratio from settings
+    const ratioPercent = this.sliderInstance.configObject.aspectRatio.split(':');
+    const calculatedHeight = Math.abs(100 / ratioPercent[0] * ratioPercent[1]);
+
+    this.divContainer.style.paddingTop = `${calculatedHeight}%`;
+    this.divContainer.appendChild(elementClone);
+
+    this.divWrapper.classList.remove('hidden');
+  }
+
+  hide() {
+    this.divWrapper.classList.add('hidden');
+  }
+}
+
+class FullscreenImage {
+  _instance = null;
+
+  constructor(sliderInstance, mainWrapper) {
+    this.sliderInstance = sliderInstance;
+    this.mainWrapper = mainWrapper;
+  }
+
+  static getInstance(sliderInstance, mainWrapper) {
+    if (!FullscreenImage._instance) {
+      FullscreenImage._instance = new FullscreenImage(sliderInstance, mainWrapper);
+    }
+
+    return FullscreenImage._instance;
+  }
+
+  init() {
     this.imageWrapper = document.createElement('div');
     this.imageWrapper.classList.add('mfw-image-wrapper');
-    this.wrapper.appendChild(this.imageWrapper);
 
     this.imageContainer = document.createElement('div');
     this.imageContainer.classList.add('mfw-image-container');
-    // this.wrapper.appendChild(this.imageContainer);
+
     this.imageWrapper.appendChild(this.imageContainer);
 
     this.imageDiv = document.createElement('div');
     this.imageDiv.classList.add('nfw-image-item');
-    // this.wrapper.appendChild(this.imageContainer);
+    // this.mainWrapper.appendChild(this.imageContainer);
     this.imageContainer.appendChild(this.imageDiv);
 
     this.imageElem = document.createElement('img');
@@ -72,28 +180,29 @@ class Fullscreen {
     this.imageElem.addEventListener('touchend', this._imageTouchEndHandle);
     this.imageElem.addEventListener('touchcancel', this._imageTouchEndHandle);
 
-    document.body.appendChild(this.wrapper);
+    // add to parent
+    this.mainWrapper.appendChild(this.imageWrapper);
   }
 
   show() {
-    if (this.containerId == null) {
-      this.insert();
+    if (this.imageWrapper == null) {
+      this.init();
     }
 
-    const activeImage = this.sliderInstance.boardList.children[this.sliderInstance.activeIndex].querySelector('img');
+    const activeContentElement = this.sliderInstance.boardList.children[this.sliderInstance.activeIndex].firstElementChild;
 
-    this.imageElem.src = activeImage.src;
+    this.imageElem.src = activeContentElement.src;
     this.imageElem.style.transform = null;
 
     this.scale = 1;
     this.positionX = 0;
     this.positionY = 0;
 
-    this.wrapper.classList.remove('hidden');
+    this.imageWrapper.classList.remove('hidden');
   }
 
-  hide(event) {
-    this.wrapper.classList.add('hidden');
+  hide() {
+    this.imageWrapper.classList.add('hidden');
   }
 
   zoomToggle(event) {

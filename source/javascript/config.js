@@ -12,15 +12,12 @@ const config = {
   touchChangeCoefficient: 15, // A feature that indicates that on touch screens, the image will switch to the next image the more it is scrolled.
   styleAutoload: true, // Default styles are added to <head> automatically. If you want to add your own css, this field must be false.
   languageCode: 'tr', // Language code
-  module: {
-    'thumbnail/slider': { // dot, basic, slider
-      id: 'thumbnail-example', // Target ID, this element must contain items for sliding.
-      // type: 'slider',
-      transitionSpeed: 100
-    },
-    fullscreen: true,
-    control: {}
-  }
+  module: [
+    'thumbnail/dot',
+    'fullscreen',
+    'control',
+    'zoom'
+  ]
 };
 
 export default config;

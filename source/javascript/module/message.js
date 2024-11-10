@@ -1,7 +1,15 @@
 class Message {
-  constructor(sliderInstance, messsage) {
-    this.sliderInstance = sliderInstance;
+  messsage = '';
 
+  constructor(sliderInstance) {
+    this.sliderInstance = sliderInstance;
+  }
+
+  setMessage(messsage) {
+    this.messsage = messsage;
+  }
+
+  getElement() {
     // Wrapper'ı buraya sadece contentWidthLimit ekleyebilmek için koyuyoruz. contentWidthLimit kaldırılırsa wrapper'de kaldırılabilir.
     this.boardListItemMessageWrapper = document.createElement('div');
     this.boardListItemMessageWrapper.classList.add('minyatur-on-image-message-wrapper');
@@ -12,7 +20,7 @@ class Message {
 
     this.boardListItemMessageContainer = document.createElement('div');
     this.boardListItemMessageContainer.classList.add('minyatur-on-image-message-container');
-    this.boardListItemMessageContainer.appendChild(document.createTextNode(messsage));
+    this.boardListItemMessageContainer.appendChild(document.createTextNode(this.messsage));
 
     this.boardListItemMessageWrapper.appendChild(this.boardListItemMessageContainer);
 

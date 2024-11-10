@@ -1,4 +1,3 @@
-import ItemMessage from '/var/www/html/actipro/sadrazam/source/javascript/library/message.js';
 import Language from '../language/language.js';
 
 import _config from '../config.js';
@@ -48,16 +47,17 @@ class Slider {
     // Slider items
     this.sliderDataObject = sliderDataObject;
     if (!this.sliderDataObject.length) {
-      const sliderImages = this.mainContainer.firstElementChild.children;
+      const userItems = this.mainContainer.firstElementChild.children;
 
-      if (!sliderImages.length || !sliderImages[0].hasAttribute('data-src')) {
+      // if (!userItems.length || !userItems[0].hasAttribute('data-src')) {
+      if (!userItems.length) {
         console.warn('Minyatur Error: There is no image to show. Please insert `div` inside of `slider container element` and than insert images to the `div` with `img` tag.');
 
         return;
       }
 
-      [].forEach.call(sliderImages, item => {
-        this.sliderDataObject.push({ src: item.getAttribute('data-src'), wide: item.getAttribute('data-wide'), message: item.getAttribute('data-message') });
+      [].forEach.call(userItems, item => {
+        this.sliderDataObject.push({ element: item, message: item.getAttribute('data-message') });
       });
     }
 
@@ -109,15 +109,31 @@ class Slider {
       const boardListItem = document.createElement('li');
       this.boardList.appendChild(boardListItem);
 
-      const boardListItemImageContainer = document.createElement('img');
+      // https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit
+      const objectFitSupportedElements = ['img', 'video'];
+
+      if (objectFitSupportedElements.includes(item.element.tagName.toLowerCase())) {
+        item.element.style.objectFit = this.configObject.objectFit;
+      }
+
+      /* const boardListItemImageContainer = document.createElement('img');
       boardListItemImageContainer.src = item.src;
-      boardListItemImageContainer.style.objectFit = this.configObject.objectFit;
+      boardListItemImageContainer.style.objectFit = this.configObject.objectFit; */
 
-      boardListItem.appendChild(boardListItemImageContainer);
+      boardListItem.appendChild(item.element);
 
+      // Bu mesaj ekleme kısmını kontrol et!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (item.message) {
-        const messageElement = new ItemMessage(this, item.message);
-        boardListItem.appendChild(messageElement);
+        import('../module/message').then(exportedModule => {
+          const MessageModule = exportedModule.default;
+
+          const messageInstance = new MessageModule(this);
+          messageInstance.setMessage(item.message);
+
+          boardListItem.appendChild(messageInstance.getElement());
+        }).catch(error => {
+          console.warn(error);
+        });
       }
     });
 
@@ -139,7 +155,8 @@ class Slider {
 
     // Access to the modules then initialize
     this.modules = new Set();
-    Object.keys(this.configObject.module).forEach(key => {
+    // Object.keys(this.configObject.module).forEach(key => {
+    this.configObject.module.forEach(key => {
       const splitedPath = key.split('/');
 
       let _class;
@@ -154,7 +171,7 @@ class Slider {
       import(`../module/${splitedPath.join('/')}`).then(exportedModule => {
         const Module = _class != null ? exportedModule[_class] : exportedModule.default;
 
-        const ModuleInstance = new Module(this, this.configObject.module[key]);
+        const ModuleInstance = new Module(this);
         this.modules.add(ModuleInstance);
 
         if (ModuleInstance.append) {
