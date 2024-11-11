@@ -6,6 +6,7 @@
 	<base href="/" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
 	<script type="text/javascript" src="instant-compiled-folder/minyatur.js"></script>
+	<link rel="stylesheet" type="text/css" href="instant-compiled-folder/minyatur.css">
 	<link rel="stylesheet" type="text/css" href="font-awesome-6/css/all.min.css">
 </head>
 <body>
@@ -23,6 +24,27 @@
 					<img src="image/2.jpg" />
 					<img src="image/3.jpg" />
 					<img src="image/4.jpg" />
+					<div style="width: 100%; height: 100%; background-color: red; display: flex; justify-content: center; align-items: center; font-size: 4vmin; font-weight: 600; font-family: sans-serif; user-select: none;"  data-message="Anan yanımda">Div Slider Example</div>
+					<video src="video/1.mp4" controls />
+				</div>
+			</div>
+		</div>
+		<br>
+		<div style="font-size: 32px; font-weight: bold; font-family: arial;">Minyatur - Slider</div>
+		<br>
+		<div>
+			<div id="slider-example2">
+				<div>
+					<img src="image/1.jpg" data-message="Anan yanımda" />
+					<img src="image/6.jpg" />
+					<img src="image/3.jpg" />
+					<img src="image/4.jpg" />
+					<img src="image/1.jpg" />
+					<img src="image/2.jpg" />
+					<img src="image/3.jpg" />
+					<img src="image/4.jpg" />
+					<div style="width: 100%; height: 100%; background-color: red; display: flex; justify-content: center; align-items: center; font-size: 4vmin; font-weight: 600; font-family: sans-serif; user-select: none;"  data-message="Anan yanımda">Div Slider Example</div>
+					<iframe width="100%" height="100%" src="https://www.youtube.com/embed/pcDvFQ1fwIM?si=CgEqlAMIy_4Jv-mL&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 				</div>
 			</div>
 		</div>
@@ -32,10 +54,24 @@
 			const sliderOptions = {
 				id: 'slider-example',
 				module: [
+					'thumbnail/basic',
+					'fullscreen',
+					'control',
+					// 'zoom',
+				]
+			};
+
+			new Minyatur(sliderOptions);
+		}
+
+		if (document.getElementById('slider-example2')) {
+			const sliderOptions = {
+				id: 'slider-example2',
+				module: [
 					'thumbnail/slider',
 					'fullscreen',
 					'control',
-					'zoom',
+					// 'zoom',
 				]
 			};
 

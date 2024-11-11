@@ -58,7 +58,8 @@
             flex-shrink: 0;
 
             img,
-            i {
+            i,
+            video {
                 /* Note: If transitionType is zoom, it will be overridden to cover. */
                 position: relative;
                 display: block;
@@ -240,8 +241,8 @@
 
 /* END OF DOT THUMBNAIL */
 
-/* THUMBNAIL IMAGE SHARED STYLE */
-@mixin thumbnail-image-container-shared-style {
+/* BASIC THUMBNAIL */
+.minyatur-thumbnail-basic {
     position: relative;
     width: 100%;
     margin: 0 auto;
@@ -250,9 +251,86 @@
     /*Gives room for arrow buttons*/
     box-sizing: border-box;
     user-select: none;
+
+    ul {
+        position: relative;
+
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+
+        list-style: none;
+        padding: 6px 0;
+        margin: 0 auto;
+
+
+        li {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            list-style: none;
+
+            cursor: pointer;
+            height: 50px;
+            width: 100%;
+            border: 2px solid var(--color-theme-base);
+            box-sizing: border-box;
+
+            overflow: hidden;
+
+            &+li {
+                //  margin-left: 6px;
+            }
+
+            &.active,
+            &.active:hover {
+                border-color: var(--color-theme-dark);
+            }
+
+            &:hover {
+                background-color: var(--color-theme-light);
+            }
+
+            &>* {
+                max-width: 100%;
+                max-height: 100%;
+                display: block;
+                margin: 0 auto;
+
+                // iframe user agent border to none;
+                border: none;
+            }
+
+            /* a {
+                    width: 100%;
+                    height: 100%;
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    background-position: center center;
+                    background-color: red;
+                    display: block;
+                    font-size: 0;
+                    } */
+        }
+    }
 }
 
-@mixin thumbnail-image-list-shared-style {
+/* END OF BASIC THUMBNAIL */
+
+/* SLIDER THUMBNAIL */
+.minyatur-thumbnail-slider {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+    /*Gives room for arrow buttons*/
+    box-sizing: border-box;
+    user-select: none;
+
     ul {
         position: relative;
         display: flex;
@@ -288,10 +366,14 @@
                 background-color: var(--color-theme-light);
             }
 
-            img {
+            &>* {
                 max-width: 100%;
                 max-height: 100%;
                 display: block;
+                margin: 0 auto;
+
+                // iframe user agent border to none;
+                border: none;
             }
 
             /* a {
@@ -306,33 +388,6 @@
                     } */
         }
     }
-}
-
-/* END OF THUMBNAIL IMAGE SHARED STYLE */
-
-/* BASIC THUMBNAIL */
-.minyatur-thumbnail-basic {
-    @include thumbnail-image-container-shared-style;
-    @include thumbnail-image-list-shared-style;
-
-    ul {
-        flex-wrap: wrap;
-    }
-}
-
-/* END OF BASIC THUMBNAIL */
-
-/* SLIDER THUMBNAIL */
-.minyatur-thumbnail-slider {
-    @include thumbnail-image-container-shared-style;
-
-    @media only screen and (max-width: variables-global.$responsive-breakpoint-level-1) {
-        & {
-            padding: 0;
-        }
-    }
-
-    @include thumbnail-image-list-shared-style;
 
     @mixin thumbnail-button-shared-style {
         position: absolute;

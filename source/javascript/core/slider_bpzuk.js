@@ -1,12 +1,13 @@
 import Language from '../language/language.js';
-
 import _config from '../config.js';
 
 // eslint-disable-next-line
 import defaultStyle from '!!css-loader?{"sourceMap":false,"exportType":"string"}!sass-loader?{"api":"modern"}!../../stylesheet/minyatur.scss';
 
 class Slider {
-  constructor(configUser = {}, sliderDataObject = []) {
+  sliderItemsDataArray = [];
+
+  constructor(configUser = {}, sliderItemsAsParameter = []) {
     this.activeIndex = 0;
     this.boardListOnTransition = null;
 
@@ -23,14 +24,16 @@ class Slider {
     Language.load(this.configObject.languageCode);
     this.language = Language;
 
-    // Insert default style first
+    // Let's add the default css file if it is not added before
     if (this.configObject.styleAutoload) {
-      const styleElement = document.createElement('style');
-      styleElement.setAttribute('type', 'text/css');
-      styleElement.classList.add('minyatur-default-style');
-      styleElement.innerHTML = defaultStyle;
+      if (!document.querySelector('.minyatur-default-style') && !document.querySelector('link[href*="minyatur.css"]')) {
+        const styleElement = document.createElement('style');
+        styleElement.setAttribute('type', 'text/css');
+        styleElement.classList.add('minyatur-default-style');
+        styleElement.innerHTML = defaultStyle;
 
-      window.document.head.appendChild(styleElement);
+        window.document.head.appendChild(styleElement);
+      }
     }
 
     // Generate main container
@@ -44,22 +47,8 @@ class Slider {
       return;
     }
 
-    // Slider items
-    this.sliderDataObject = sliderDataObject;
-    if (!this.sliderDataObject.length) {
-      const userItems = this.mainContainer.firstElementChild.children;
-
-      // if (!userItems.length || !userItems[0].hasAttribute('data-src')) {
-      if (!userItems.length) {
-        console.warn('Minyatur Error: There is no image to show. Please insert `div` inside of `slider container element` and than insert images to the `div` with `img` tag.');
-
-        return;
-      }
-
-      [].forEach.call(userItems, item => {
-        this.sliderDataObject.push({ element: item, message: item.getAttribute('data-message') });
-      });
-    }
+    // we will use these later
+    this.userDefinedItems = [...this.mainContainer.firstElementChild.children, ...sliderItemsAsParameter];
 
     // Empty the main container
     while (this.mainContainer.firstChild) {
@@ -102,40 +91,16 @@ class Slider {
     this.boardListContainer.appendChild(this.boardList);
 
     // We assign it to different variables for practical access
-    this.boardItems = this.boardList.children;
+    // this.boardItems = this.boardList.children;
 
-    // Inject items to the board
-    this.sliderDataObject.forEach(item => {
-      const boardListItem = document.createElement('li');
-      this.boardList.appendChild(boardListItem);
+    // if (!userItems.length || !userItems[0].hasAttribute('data-src')) {
+    if (!this.userDefinedItems.length) {
+      console.warn('Minyatur Error: There is no image to show. Please insert `div` inside of `slider container element` and than insert images to the `div` with `img` tag.');
 
-      // https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit
-      const objectFitSupportedElements = ['img', 'video'];
+      return;
+    }
 
-      if (objectFitSupportedElements.includes(item.element.tagName.toLowerCase())) {
-        item.element.style.objectFit = this.configObject.objectFit;
-      }
-
-      /* const boardListItemImageContainer = document.createElement('img');
-      boardListItemImageContainer.src = item.src;
-      boardListItemImageContainer.style.objectFit = this.configObject.objectFit; */
-
-      boardListItem.appendChild(item.element);
-
-      // Bu mesaj ekleme kısmını kontrol et!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      if (item.message) {
-        import('../module/message').then(exportedModule => {
-          const MessageModule = exportedModule.default;
-
-          const messageInstance = new MessageModule(this);
-          messageInstance.setMessage(item.message);
-
-          boardListItem.appendChild(messageInstance.getElement());
-        }).catch(error => {
-          console.warn(error);
-        });
-      }
-    });
+    console.log(this.userDefinedItems);
 
     // Add events
     this._touchStart = this.touchStart.bind(this);
@@ -187,6 +152,65 @@ class Slider {
 
     // Finally make the slider visible
     this.boardWrapper.style.visibility = null;
+  }
+
+  async init() {
+    await this.initItems();
+    await this.initModules();
+  }
+
+  async initItems() {
+    this.userDefinedItems.forEach(item => {
+      console.log(`slider/${item.tagName.toLowerCase()}`);
+      import(`./slider/${item.tagName.toLowerCase()}.js`).then(exportedModule => {
+        const ItemModule = exportedModule.default;
+
+        const itemInstance = new ItemModule(this);
+        itemInstance.setElement(item);
+
+        const boardListItem = document.createElement('li');
+        this.boardList.appendChild(boardListItem);
+
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit
+        const objectFitSupportedElements = ['img', 'video'];
+
+        if (objectFitSupportedElements.includes(item.tagName.toLowerCase())) {
+          item.style.objectFit = this.configObject.objectFit;
+        }
+
+        /*
+          const boardListItemImageContainer = document.createElement('img');
+          boardListItemImageContainer.src = item.src;
+          boardListItemImageContainer.style.objectFit = this.configObject.objectFit;
+        */
+
+        boardListItem.appendChild(item);
+
+        // Bu mesaj ekleme kısmını kontrol et!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (item.getAttribute('data-message')) {
+          import('../module/message').then(exportedModule => {
+            const MessageModule = exportedModule.default;
+
+            const messageInstance = new MessageModule(this);
+            messageInstance.setMessage(item.message);
+
+            boardListItem.appendChild(messageInstance.getElement());
+          }).catch(error => {
+            console.warn(error);
+          });
+        }
+
+        this.sliderItemsDataArray.push({ element: item, message: item.getAttribute('data-message') });
+      }).catch(error => {
+        item.parentNode.removeChild(item);
+
+        console.warn(error);
+      });
+    });
+  }
+
+  async initModules() {
+
   }
 
   get boardListPositionX() {

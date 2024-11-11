@@ -71,6 +71,92 @@ class Thumbnail {
     event.preventDefault();
     return false;
   }
+
+  itemInnerGenerator(sliderItem) {
+    const thumbnailListItem = document.createElement('li');
+
+    let thumbnailListItemContent;
+
+    if (sliderItem.element.tagName.toLowerCase() === 'img') {
+      thumbnailListItemContent = document.createElement('img');
+      thumbnailListItemContent.src = sliderItem.element.src;
+    }
+
+    if (sliderItem.element.tagName.toLowerCase() === 'div') {
+      thumbnailListItemContent = document.createElement('iframe');
+      thumbnailListItemContent.style.width = '100%';
+      thumbnailListItemContent.style.height = '100%';
+      thumbnailListItemContent.style.border = 'none';
+      thumbnailListItemContent.zIndex = '0';
+      thumbnailListItemContent.srcdoc = `<html style="width: 100%; height: 100%; margin: 0; padding: 0; border: 0"><body style="width: 100%; height: 100%; margin: 0; padding: 0; border: 0">${sliderItem.element.outerHTML}</body></html>`;
+
+      // iframes not fired javascript events so we will add fake event listener.
+      const fakeEventListener = document.createElement('div');
+      fakeEventListener.style.position = 'absolute';
+      fakeEventListener.style.width = '100%';
+      fakeEventListener.style.height = '100%';
+      fakeEventListener.style.top = '0';
+      fakeEventListener.style.left = '0';
+      fakeEventListener.zIndex = '1';
+
+      thumbnailListItem.appendChild(fakeEventListener);
+    }
+
+    if (sliderItem.element.tagName.toLowerCase() === 'video') {
+      thumbnailListItemContent = document.createElement('img');
+
+      sliderItem.element.addEventListener('loadeddata', function() {
+        const canvas = document.createElement('canvas');
+
+        const thumbnailVideoRatioDiver = Math.max(sliderItem.element.videoWidth / thumbnailListItem.offsetWidth, sliderItem.element.videoHeight / thumbnailListItem.offsetHeight);
+
+        canvas.width = sliderItem.element.videoWidth / thumbnailVideoRatioDiver;
+        canvas.height = sliderItem.element.videoHeight / thumbnailVideoRatioDiver;
+
+        const ctx = canvas.getContext('2d');
+        // ctx.filter = 'sepia(100%)';
+
+        this.__canplayFunc = () => {
+          if (!this.__canplayCounter) {
+            this.__canplayCounter = 0;
+          }
+
+          this.__canplayCounter++;
+
+          this.currentTime = 0.1;
+
+          ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+          thumbnailListItemContent.src = canvas.toDataURL('image/webp');
+
+          if (this.__canplayCounter > 2) {
+            this.currentTime = 0;
+            this.removeEventListener('canplay', this.__canplayFunc);
+
+            delete this.__canplayCounter;
+            delete this.__canplayFunc;
+          }
+        };
+
+        sliderItem.element.addEventListener('canplay', sliderItem.element.__canplayFunc);
+      }, { once: true });
+    }
+
+    if (!thumbnailListItemContent) {
+      console.warn('Some slider items preview not showing in thumbnail. Item without preview:', sliderItem.element);
+
+      thumbnailListItemContent = document.createElement('div');
+      thumbnailListItemContent.classList.add('blank-item');
+      thumbnailListItemContent.style.width = '100%';
+      thumbnailListItemContent.style.height = '100%';
+    }
+
+    thumbnailListItem.appendChild(thumbnailListItemContent);
+
+    this._clickHandler = this.clickHandler.bind(this, thumbnailListItem);
+    thumbnailListItem.addEventListener('click', this._clickHandler);
+
+    return thumbnailListItem;
+  }
 }
 
 class Basic extends Thumbnail {
@@ -85,34 +171,11 @@ class Basic extends Thumbnail {
 
     this.thumbnailItems = this.thumbnailList.children;
 
-    [].forEach.call(this.sliderInstance.boardItems, sliderItem => {
-      const thumbnailListItem = document.createElement('li');
+    // add slider items to thumbnail
+    this.sliderInstance.sliderItemsDataArray.forEach(sliderItem => {
+      const thumbnailListItem = this.itemInnerGenerator(sliderItem);
+
       this.thumbnailList.appendChild(thumbnailListItem);
-
-      let thumbnailListItemContent;
-
-      console.log(sliderItem);
-
-      if (sliderItem.firstElementChild.tagName.toLowerCase() === 'img') {
-        thumbnailListItemContent = document.createElement('img');
-        thumbnailListItemContent.src = sliderItem.querySelector('img').src;
-
-        thumbnailListItem.appendChild(thumbnailListItemContent);
-      }
-
-      if (sliderItem.firstElementChild.tagName.toLowerCase() === 'div') {
-        thumbnailListItemContent = document.createElement('iframe');
-        thumbnailListItemContent.style.width = '100%';
-        thumbnailListItemContent.style.height = '100%';
-        thumbnailListItemContent.style.border = 'none';
-        thumbnailListItemContent.zIndex = '-1';
-        thumbnailListItemContent.srcdoc = `<html style="width: 100%; height: 100%; margin: 0; padding: 0; border: 0"><body style="width: 100%; height: 100%; margin: 0; padding: 0; border: 0">${sliderItem.firstElementChild.outerHTML}</body></html>`;
-
-        thumbnailListItem.appendChild(thumbnailListItemContent);
-      }
-
-      this._clickHandler = this.clickHandler.bind(this, thumbnailListItem);
-      thumbnailListItem.addEventListener('click', this._clickHandler);
     });
 
     return this;
@@ -130,7 +193,8 @@ class Dot extends Thumbnail {
 
     this.thumbnailItems = this.thumbnailList.children;
 
-    [].forEach.call(this.sliderInstance.boardItems, () => {
+    // add slider items to thumbnail
+    this.sliderInstance.sliderItemsDataArray.forEach(sliderItem => {
       const thumbnailItem = document.createElement('li');
 
       this._clickHandler = this.clickHandler.bind(this, thumbnailItem);
@@ -157,21 +221,11 @@ class Slider extends Thumbnail {
 
     this.thumbnailItems = this.thumbnailList.children;
 
-    [].forEach.call(this.sliderInstance.boardItems, sliderItem => {
-      const thumbnailListItem = document.createElement('li');
+    // add slider items to thumbnail
+    this.sliderInstance.sliderItemsDataArray.forEach(sliderItem => {
+      const thumbnailListItem = this.itemInnerGenerator(sliderItem);
+
       this.thumbnailList.appendChild(thumbnailListItem);
-
-      const thumbnailListItemImageContainer = document.createElement('img');
-      thumbnailListItemImageContainer.src = sliderItem.querySelector('img').src;
-
-      /* const thumbnailListItemImageContainer = document.createElement('a');
-      thumbnailListItemImageContainer.href = sliderItem.querySelector('a').href;
-      thumbnailListItemImageContainer.style.backgroundImage = 'url(' + sliderItem.querySelector('a').href + ')'; */
-
-      this._clickHandler = this.clickHandler.bind(this, thumbnailListItem);
-      thumbnailListItem.addEventListener('click', this._clickHandler);
-
-      thumbnailListItem.appendChild(thumbnailListItemImageContainer);
     });
 
     this._touchStart = this.touchStart.bind(this);

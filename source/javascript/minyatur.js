@@ -1,4 +1,4 @@
-const Minyatur = require('./engine/slider.js').default;
+const Minyatur = require('./core/slider.js').default;
 
 globalThis.Minyatur = Minyatur;
 
