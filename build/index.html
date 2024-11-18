@@ -25,7 +25,7 @@
 					<img src="image/3.jpg" />
 					<img src="image/4.jpg" />
 					<div style="width: 100%; height: 100%; background-color: red; display: flex; justify-content: center; align-items: center; font-size: 4vmin; font-weight: 600; font-family: sans-serif; user-select: none;"  data-message="Anan yanımda">Div Slider Example</div>
-					<video src="video/1.mp4" controls />
+					<video src="video/4.mp4" controls loop="true" />
 				</div>
 			</div>
 		</div>
@@ -34,6 +34,25 @@
 		<br>
 		<div>
 			<div id="slider-example2">
+				<div>
+					<img src="image/1.jpg" data-message="Anan yanımda" />
+					<img src="image/6.jpg" />
+					<img src="image/3.jpg" />
+					<img src="image/4.jpg" />
+					<img src="image/1.jpg" />
+					<img src="image/2.jpg" />
+					<img src="image/3.jpg" />
+					<img src="image/4.jpg" />
+					<div style="width: 100%; height: 100%; background-color: red; display: flex; justify-content: center; align-items: center; font-size: 4vmin; font-weight: 600; font-family: sans-serif; user-select: none;"  data-message="Anan yanımda">Div Slider Example</div>
+					<iframe width="100%" height="100%" src="https://www.youtube.com/embed/pcDvFQ1fwIM?si=CgEqlAMIy_4Jv-mL&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+		<br>
+		<div style="font-size: 32px; font-weight: bold; font-family: arial;">Minyatur - Slider</div>
+		<br>
+		<div>
+			<div id="slider-example3">
 				<div>
 					<img src="image/1.jpg" data-message="Anan yanımda" />
 					<img src="image/6.jpg" />
@@ -69,6 +88,20 @@
 				id: 'slider-example2',
 				module: [
 					'thumbnail/slider',
+					'fullscreen',
+					'control',
+					// 'zoom',
+				]
+			};
+
+			new Minyatur(sliderOptions);
+		}
+
+		if (document.getElementById('slider-example3')) {
+			const sliderOptions = {
+				id: 'slider-example3',
+				module: [
+					'thumbnail/dot',
 					'fullscreen',
 					'control',
 					// 'zoom',

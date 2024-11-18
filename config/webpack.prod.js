@@ -1,10 +1,14 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
+const UglifyJsPlugin = require('npm');
 
 module.exports = merge(common, {
   mode: 'production',
   optimization: {
+    minimizer: [new UglifyJsPlugin({
+      test: /\.js(\?.*)?$/i
+    })]
     // minimize: false
   },
   output: {

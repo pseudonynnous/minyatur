@@ -11,10 +11,10 @@ class Item {
     return this.element;
   }
 
-  shown() {
+  show() {
   }
 
-  hidden() {
+  hide() {
   }
 
   getInstance() {

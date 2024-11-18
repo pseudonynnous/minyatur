@@ -2,20 +2,18 @@ class Language {
   static words = new Map();
   static defaultLanguageCode = 'en';
 
-  static load(languageCode) {
-    import(`./${languageCode}.js`).then(exportedModule => {
-      const translationObject = exportedModule.default;
+  static async load(languageCode) {
+    try {
+      const importModule = await import(`../language/${languageCode}`);
+      const importDefaultObject = importModule.default;
 
-      this.setAll(translationObject);
-    }).catch(error => {
-      console.warn(error);
+      this.setAll(importDefaultObject);
+    } catch {
+      const importModule = await import(`../language/${this.defaultLanguageCode}.js`);
+      const importDefaultObject = importModule.default;
 
-      import(`./${this.defaultLanguageCode}.js`).then(exportedModule => {
-        const translationObject = exportedModule.default;
-
-        this.setAll(translationObject);
-      });
-    });
+      this.setAll(importDefaultObject);
+    }
   }
 
   static get(key) {

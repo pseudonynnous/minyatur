@@ -1,4 +1,4 @@
-import Item from './item.js';
+import Item from '../core/item.js';
 
 class Div extends Item {
 }

@@ -1,11 +1,11 @@
-import Language from '../language/language.js';
 import _config from '../config.js';
+import Language from './language.js';
 
 // eslint-disable-next-line
 import defaultStyle from '!!css-loader?{"sourceMap":false,"exportType":"string"}!sass-loader?{"api":"modern"}!../../stylesheet/minyatur.scss';
 
 class Slider {
-  sliderItemsDataArray = [];
+  sliderItems = new Map();
 
   constructor(configUser = {}, sliderItemsAsParameter = []) {
     this.activeIndex = 0;
@@ -139,7 +139,7 @@ class Slider {
   async initItems() {
     for (const item of this.userDefinedItems) {
       try {
-        const ItemModule = await import(`./slider/${item.tagName.toLowerCase()}.js`);
+        const ItemModule = await import(`../item/${item.tagName.toLowerCase()}.js`);
         const ItemClass = ItemModule.default;
 
         const itemInstance = new ItemClass(this);
@@ -168,7 +168,9 @@ class Slider {
           boardListItem.appendChild(messageInstance.getElement());
         }
 
-        this.sliderItemsDataArray.push({ element: item, message: item.getAttribute('data-message') });
+        this.sliderItems.set([...this.boardList.children].indexOf(boardListItem), { instance: itemInstance, element: item, message: item.getAttribute('data-message') });
+
+        // this.sliderItems.push({ element: item, message: item.getAttribute('data-message') });
       } catch (error) {
         console.warn(error);
       }
@@ -179,7 +181,7 @@ class Slider {
     // Access to the modules then initialize
     this.modules = new Set();
     // Object.keys(this.configObject.module).forEach(key => {
-    this.configObject.module.forEach(key => {
+    for (const key of this.configObject.module) {
       const splitedPath = key.split('/');
 
       let _class;
@@ -191,7 +193,8 @@ class Slider {
         _class = `${_class[0].toUpperCase()}${_class.slice(1)}`;
       }
 
-      import(`../module/${splitedPath.join('/')}`).then(exportedModule => {
+      try {
+        const exportedModule = await import(`../module/${splitedPath.join('/')}`);
         const Module = _class != null ? exportedModule[_class] : exportedModule.default;
 
         const ModuleInstance = new Module(this);
@@ -200,10 +203,10 @@ class Slider {
         if (ModuleInstance.append) {
           ModuleInstance.append();
         }
-      }).catch(error => {
+      } catch (error) {
         console.warn(error);
-      });
-    });
+      }
+    }
   }
 
   get boardListPositionX() {
@@ -239,9 +242,9 @@ class Slider {
     }
   }
 
-  insertItem(index, { transition = true, transitionSpeed = this.configObject.transitionSpeed, source = null } = {}) {
-    if (index >= this.boardList.children.length) {
-      index = this.boardList.children.length - 1;
+  insertItem(newIndex, { transition = true, transitionSpeed = this.configObject.transitionSpeed, source = null } = {}) {
+    if (newIndex >= this.boardList.children.length) {
+      newIndex = this.boardList.children.length - 1;
 
       if (this.configObject.infinityAction) {
         this.nextItemInfinityMotion();
@@ -256,8 +259,8 @@ class Slider {
       }
     }
 
-    if (index < 0) {
-      index = 0;
+    if (newIndex < 0) {
+      newIndex = 0;
 
       if (this.configObject.infinityAction) {
         this.prevItemInfinityMotion();
@@ -275,20 +278,28 @@ class Slider {
     if (transition === false) {
       this.transitionOff();
     } else {
-      transitionSpeed *= Math.abs(this.activeIndex - index) ? Math.abs(this.activeIndex - index) : 1;
+      transitionSpeed *= Math.abs(this.activeIndex - newIndex) ? Math.abs(this.activeIndex - newIndex) : 1;
 
       this.transitionOn(transitionSpeed);
     }
 
-    this.activeIndex = index;
+    // Hide old index element
+    this.sliderItems.get(this.activeIndex).instance.hide();
 
+    // Set active index
+    this.activeIndex = newIndex;
+
+    // Pass new index to mudules
     this.modules.forEach(v => {
       if (v.insertItem != null) {
-        v.insertItem(index);
+        v.insertItem(newIndex);
       }
     });
 
-    this.boardListPositionX = -1 * this.boardList.offsetWidth * index;
+    // Show new index element
+    this.sliderItems.get(newIndex).instance.show();
+
+    this.boardListPositionX = -1 * this.boardList.offsetWidth * newIndex;
   }
 
   prevItem(source = null) {
