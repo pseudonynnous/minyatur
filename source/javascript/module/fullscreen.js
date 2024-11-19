@@ -54,7 +54,7 @@ class Fullscreen {
     this._hide = this.hide.bind(this);
 
     this.closeButton = document.createElement('button');
-    this.closeButton.innerHTML = `<i class="fa-solid fa-xmark"></i> ${this.sliderInstance.language.get('close')}`;
+    this.closeButton.innerHTML = '<i class="fa-solid fa-xmark fa-2x"></i>';
     this.closeButton.addEventListener('touchstart', this._hide, false);
     this.closeButton.addEventListener('click', this._hide, false);
     // this.closeButton.innerHTML = `<i class="fa-solid fa-xmark"></i> ${this.language.get('close')}`;

@@ -107,7 +107,7 @@ class Slider {
 
     this._touchMove = this.touchMove.bind(this);
     // https://chromestatus.com/feature/5745543795965952
-    this.boardListContainer.addEventListener('touchmove', this._touchMove, { passive: true });
+    this.boardListContainer.addEventListener('touchmove', this._touchMove, { passive: false });
 
     this._touchEnd = this.touchEnd.bind(this);
     this.boardListContainer.addEventListener('touchend', this._touchEnd);
@@ -391,6 +391,8 @@ class Slider {
       return;
     }
 
+    this.transitionOff();
+
     this.touchStartEvent = event;
 
     this.touchPositionData = {};
@@ -398,22 +400,24 @@ class Slider {
     this.touchPositionData.touchStartBoardListPositionX = this.boardListPositionX;
     this.touchPositionData.touchXDiff = 0;
     this.touchPositionData.touchYDiff = 0;
-
-    this.transitionOff();
   }
 
   touchMove(event) {
+    if (typeof event.cancelable === 'boolean' && !event.cancelable) {
+      this.touchPositionData = null;
+
+      return;
+    }
+
     if (this.boardListOnTransition != null) {
       return;
     }
 
     if (this.touchPositionData == null) {
       this.touchStart(event);
-
-      return;
     }
 
-    if (this.touchPositionData.type === 'horizontal') {
+    if (this.touchPositionData.type === 'vertical') {
       return;
     }
 
@@ -422,22 +426,25 @@ class Slider {
 
     if (this.touchPositionData.type == null) {
       if (Math.abs(this.touchPositionData.touchYDiff) <= Math.abs(this.touchPositionData.touchXDiff)) {
-        this.touchPositionData.type = 'vertical';
-      } else {
         this.touchPositionData.type = 'horizontal';
+      } else {
+        this.touchPositionData.type = 'vertical';
       }
     }
 
     if (this.touchPositionData.type === 'vertical') {
+      return;
+    }
+
+    if (this.touchPositionData.type === 'horizontal') {
       this.boardListPositionX = this.touchPositionData.touchStartBoardListPositionX + this.touchPositionData.touchXDiff;
 
-      // event.preventDefault();
-
-      return false;
+      event.preventDefault();
     }
   }
 
   touchEnd(event) {
+    console.log('touchend');
     if (this.boardListOnTransition != null) {
       return;
     }
@@ -446,7 +453,9 @@ class Slider {
       return;
     }
 
-    if (this.touchPositionData.type === 'horizontal') {
+    if (this.touchPositionData.type === 'vertical') {
+      this.touchPositionData = null;
+
       return;
     }
 

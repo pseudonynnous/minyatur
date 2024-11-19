@@ -40,7 +40,7 @@ $color-zoom-lens: rgba(19, 28, 209, .4);
 	--color-image-background-color: #{$color-image-background-color};
 	--color-zoom-lens: #{$color-zoom-lens};
 
-	--color-thumbnail-inactive: #{variables-global.$color-grey-200};
+	--color-thumbnail-inactive: #{variables-global.$color-grey-400};
 	--color-thumbnail-hover: #{$color-theme-second-light};
 	--color-thumbnail-active: #{$color-theme-base};
 
@@ -51,7 +51,7 @@ $color-zoom-lens: rgba(19, 28, 209, .4);
 		--color-image-background-color: #{$color-image-background-color};
 		--color-zoom-lens: #{$color-zoom-lens};
 
-		--color-thumbnail-inactive: #{variables-global.$color-grey-200};
+		--color-thumbnail-inactive: #{variables-global.$color-grey-400};
 		--color-thumbnail-hover: #{$color-theme-second-dark};
 		--color-thumbnail-active: #{$color-theme-base};
 

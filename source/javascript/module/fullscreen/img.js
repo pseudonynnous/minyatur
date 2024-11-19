@@ -1,4 +1,6 @@
 class Img {
+  transitionDuration = 500;
+
   constructor(sliderInstance, mainWrapper) {
     this.sliderInstance = sliderInstance;
     this.mainWrapper = mainWrapper;
@@ -69,6 +71,9 @@ class Img {
 
   zoomToggle(event) {
     this.imageElem.removeEventListener('mousemove', this._imageMouseMoveHandler);
+
+    this.imageElem.style.transitionDuration = `${this.transitionDuration}ms`;
+    this.imageElem.style.transitionTimingFunction = 'ease';
     // document.getElementById('log-div').appendChild(document.createTextNode('first-dist: doubleclick\n\n'));
 
     if (this.scale == null || this.scale > 1) {
@@ -86,14 +91,15 @@ class Img {
     this.positionX = 0;
     this.positionY = 0;
 
-    this.imageElem.style.transitionDuration = '200ms';
-    this.imageElem.style.transitionTimingFunction = 'ease';
-    this.imageElem.style.transform = `translate(${-this.positionX}px, ${-this.positionY}px) scale(${this.scale})`;
+    this.imageElem.style.transform = `translate(${this.positionX}px, ${this.positionY}px) scale(${this.scale})`;
 
     window.setTimeout(f => {
       this._imageMouseMoveHandler = this.imageMouseMoveHandler.bind(this);
       this.imageElem.addEventListener('mousemove', this._imageMouseMoveHandler);
-    }, 200);
+
+      this.imageElem.style.transitionDuration = null;
+      this.imageElem.style.transitionTimingFunction = null;
+    }, this.transitionDuration + 10);
   }
 
   imageClickHandler(event) {
@@ -122,37 +128,47 @@ class Img {
   }
 
   imageMouseMoveHandler(event) {
+    this.imageElem.style.transitionDuration = null;
+    this.imageElem.style.transitionTimingFunction = null;
+
     // https://codepen.io/pseudonynnous/pen/poMKRag
-    const imageContainerRect = this.imageContainer.getBoundingClientRect();
-    const imageElemRect = this.imageElem.getBoundingClientRect();
+    const containerRect = this.imageContainer.getBoundingClientRect();
+    const imageRect = this.imageElem.getBoundingClientRect();
 
-    if (imageContainerRect.width < imageElemRect.width) {
-      const katsayi = imageElemRect.width / imageContainerRect.width;
+    // X Axis
+    const imageContainerRatioX = (imageRect.width - containerRect.width) / imageRect.width;
+    const clientXPositionRatioX = (event.clientX - containerRect.x) / containerRect.width;
 
-      this.positionX = (event.clientX - (imageContainerRect.x + imageContainerRect.width / 2)) * katsayi;
+    let ratioX = 0;
+    if (imageContainerRatioX > 0) {
+      ratioX = ((clientXPositionRatioX * imageContainerRatioX) - (imageContainerRatioX / 2));
 
-      if (this.positionX > 0 && this.positionX > (imageElemRect.width - imageContainerRect.width) / 2) {
-        this.positionX = (imageElemRect.width - imageContainerRect.width) / 2;
-      } else if (this.positionX < 0 && -this.positionX > (imageElemRect.width - imageContainerRect.width) / 2) {
-        this.positionX = -(imageElemRect.width - imageContainerRect.width) / 2;
+      // We want the picture to come to an end before it gets close to the borders.
+      ratioX *= 1.1;
+
+      if (Math.abs(ratioX) > (imageContainerRatioX / 2)) {
+        ratioX = (ratioX < 0 ? -imageContainerRatioX : imageContainerRatioX) / 2;
       }
-    } else {
-      this.positionX = 0;
     }
 
-    if (imageContainerRect.height < imageElemRect.height) {
-      const katsayi = imageElemRect.height / imageContainerRect.height;
+    // Y Axis
+    const imageContainerRatioY = (imageRect.height - containerRect.height) / imageRect.height;
+    const clientXPositionRatioY = (event.clientY - containerRect.y) / containerRect.height;
 
-      this.positionY = (event.clientY - (imageContainerRect.y + imageContainerRect.height / 2)) * katsayi;
+    let ratioY = 0;
+    if (imageContainerRatioY > 0) {
+      ratioY = ((clientXPositionRatioY * imageContainerRatioY) - (imageContainerRatioY / 2));
 
-      if (this.positionY > 0 && this.positionY > (imageElemRect.height - imageContainerRect.height) / 2) {
-        this.positionY = (imageElemRect.height - imageContainerRect.height) / 2;
-      } else if (this.positionY < 0 && -this.positionY > (imageElemRect.height - imageContainerRect.height) / 2) {
-        this.positionY = -(imageElemRect.height - imageContainerRect.height) / 2;
+      // We want the picture to come to an end before it gets close to the borders.
+      ratioY *= 1.1;
+
+      if (Math.abs(ratioY) > (imageContainerRatioY / 2)) {
+        ratioY = (ratioY < 0 ? -imageContainerRatioY : imageContainerRatioY) / 2;
       }
-    } else {
-      this.positionY = 0;
     }
+
+    this.positionX = ratioX * (imageRect.width);
+    this.positionY = ratioY * (imageRect.height);
 
     this.imageElem.style.transform = `translate(${-this.positionX}px, ${-this.positionY}px) scale(${this.scale})`;
   }
@@ -217,24 +233,24 @@ class Img {
       this.scale = 1;
     }
 
-    const imageContainerRect = this.imageContainer.getBoundingClientRect();
-    const imageElemRect = this.imageElem.getBoundingClientRect();
+    const containerRect = this.imageContainer.getBoundingClientRect();
+    const imageRect = this.imageElem.getBoundingClientRect();
 
-    if (imageContainerRect.width > imageElemRect.width) {
+    if (containerRect.width > imageRect.width) {
       this.positionX = 0;
     } else {
-      if (imageContainerRect.left < imageElemRect.left) this.positionX += imageElemRect.left - imageContainerRect.left;
-      if (imageContainerRect.right > imageElemRect.right) this.positionX += imageElemRect.right - imageContainerRect.right;
+      if (containerRect.left < imageRect.left) this.positionX += imageRect.left - containerRect.left;
+      if (containerRect.right > imageRect.right) this.positionX += imageRect.right - containerRect.right;
     }
 
-    if (imageContainerRect.height > imageElemRect.height) {
+    if (containerRect.height > imageRect.height) {
       this.positionY = 0;
     } else {
-      if (imageContainerRect.top < imageElemRect.top) this.positionY += imageElemRect.top - imageContainerRect.top;
-      if (imageContainerRect.bottom > imageElemRect.bottom) this.positionY += imageElemRect.bottom - imageContainerRect.bottom;
+      if (containerRect.top < imageRect.top) this.positionY += imageRect.top - containerRect.top;
+      if (containerRect.bottom > imageRect.bottom) this.positionY += imageRect.bottom - containerRect.bottom;
     }
 
-    this.imageElem.style.transitionDuration = '200ms';
+    this.imageElem.style.transitionDuration = `${this.transitionDuration}ms`;
     this.imageElem.style.transitionTimingFunction = 'ease';
 
     this.imageElem.style.transform = `translate(${-this.positionX}px, ${-this.positionY}px) scale(${this.scale})`;
