@@ -16,7 +16,7 @@ class Slider extends Thumbnail {
 
     this.thumbnailItems = this.thumbnailList.children;
 
-    this.previewGenerator();
+    this.previewGenerator('image');
 
     this._touchStart = this.touchStart.bind(this);
     this.thumbnailList.addEventListener('touchstart', this._touchStart);
@@ -56,38 +56,6 @@ class Slider extends Thumbnail {
   set thumbnailListPositionX(position) {
     this.thumbnailList.style.transform = `translateX(${position}px)`;
     this.thumbnailList.positionX = position;
-  }
-
-  async previewGenerator() {
-    // add slider items to thumbnail
-    const sliderItems = [...this.sliderInstance.sliderItems.values()];
-
-    for (const sliderItem of sliderItems) {
-      try {
-        const importModule = await import(`../preview/${sliderItem.element.tagName.toLowerCase()}.js`);
-        const ImportModuleClass = importModule.default;
-
-        const thumbnailListItem = ImportModuleClass.image(sliderItem);
-
-        this._clickHandler = this.clickHandler.bind(this, thumbnailListItem);
-        thumbnailListItem.addEventListener('click', this._clickHandler);
-
-        this.thumbnailList.appendChild(thumbnailListItem);
-      } catch (error) {
-        console.warn('Some slider items preview not showing in thumbnail. Item without preview:', sliderItem.element);
-
-        const thumbnailListItem = document.createElement('li');
-
-        const thumbnailListItemContent = document.createElement('div');
-        thumbnailListItemContent.classList.add('blank-item');
-        thumbnailListItemContent.style.width = '100%';
-        thumbnailListItemContent.style.height = '100%';
-
-        thumbnailListItem.appendChild(thumbnailListItemContent);
-
-        this.thumbnailList.appendChild(thumbnailListItem);
-      }
-    }
   }
 
   resized() {

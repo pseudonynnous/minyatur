@@ -125,6 +125,15 @@ class Slider {
     this.init();
   }
 
+  get boardListPositionX() {
+    return this.boardList.positionX;
+  }
+
+  set boardListPositionX(position) {
+    this.boardList.style.transform = `translateX(${position}px)`;
+    this.boardList.positionX = position;
+  }
+
   async init() {
     await this.initItems();
     await this.initModules();
@@ -207,15 +216,6 @@ class Slider {
         console.warn(error);
       }
     }
-  }
-
-  get boardListPositionX() {
-    return this.boardList.positionX;
-  }
-
-  set boardListPositionX(position) {
-    this.boardList.style.transform = `translateX(${position}px)`;
-    this.boardList.positionX = position;
   }
 
   resizeBoardListPositionX() {
@@ -400,9 +400,13 @@ class Slider {
     this.touchPositionData.touchStartBoardListPositionX = this.boardListPositionX;
     this.touchPositionData.touchXDiff = 0;
     this.touchPositionData.touchYDiff = 0;
+
+    document.getElementById('log2').innerHTML = `${this.touchPositionData.type}`;
   }
 
   touchMove(event) {
+    document.getElementById('log2').innerHTML = `${this.touchPositionData.type}`;
+
     if (typeof event.cancelable === 'boolean' && !event.cancelable) {
       this.touchPositionData = null;
 
@@ -444,7 +448,6 @@ class Slider {
   }
 
   touchEnd(event) {
-    console.log('touchend');
     if (this.boardListOnTransition != null) {
       return;
     }
@@ -470,6 +473,22 @@ class Slider {
     }
 
     this.touchPositionData = null;
+  }
+
+  isTouch() {
+    if ('ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch)) {
+      return true;
+    }
+
+    const prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
+    const mq = function(query) {
+      return window.matchMedia(query).matches;
+    };
+
+    // include the 'heartz' as a way to have a non matching MQ to help terminate the join
+    // https://git.io/vznFH
+    const query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
+    mq(query);
   }
 }
 
