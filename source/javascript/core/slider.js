@@ -13,6 +13,12 @@ class Slider {
 
     this.configObject = { ..._config };
 
+    if (typeof configUser !== 'object') {
+      console.error('Config variable must be an object. Minyatur could not load.');
+
+      return;
+    }
+
     // Overwrite user settings over default settings
     Object.keys(this.configObject).forEach(key => {
       if (Object.hasOwn(configUser, key)) {
@@ -42,7 +48,7 @@ class Slider {
     this.mainContainer.__minyatur = this;
 
     if (!this.mainContainer) {
-      console.warn(`Minyatur Error: There is no container with selector: ${this.configObject.id}`);
+      console.error(`Minyatur Error: There is no container with selector: ${this.configObject.id}`);
 
       return;
     }
@@ -52,7 +58,7 @@ class Slider {
 
     // if (!userItems.length || !userItems[0].hasAttribute('data-src')) {
     if (!this.userDefinedItems.length) {
-      console.warn('Minyatur Error: There is no image to show. Please insert `div` inside of `slider container element` and than insert images to the `div` with `img` tag.');
+      this.printItemErrorMessage();
 
       return;
     }
@@ -87,59 +93,71 @@ class Slider {
 
     // Generate boardlist
     this.boardList = document.createElement('ul');
-    this.boardList.positionX = 0;
+
+    // Transation Evnets
     this.boardList.addEventListener('transitionstart', () => {
       this.boardListOnTransition = true;
     });
     this.boardList.addEventListener('transitionend', () => {
       this.boardListOnTransition = null;
+      this.transitionOff();
+    });
+
+    // touchstart
+    this._touchStart = this.touchStart.bind(this);
+    this.boardList.addEventListener('touchstart', this._touchStart, { passive: true });
+
+    // touchmove
+    this._touchMove = this.touchMove.bind(this);
+    this.boardList.addEventListener('touchmove', this._touchMove, { passive: false });
+
+    // touchend and touchcancel
+    this._touchStop = this.touchStop.bind(this);
+    this.boardList.addEventListener('touchend', this._touchStop, { passive: true });
+    this.boardList.addEventListener('touchcancel', this._touchStop, { passive: true });
+
+    // End of scroll change scrollIndex
+    this.boardList.addEventListener('scroll', (event) => {
+      if (this.scrollEndTimer) {
+        window.clearTimeout(this.scrollEndTimer);
+      }
+
+      if (this.boardListOnTransition) {
+        return;
+      }
+
+      this.scrollEndTimer = window.setTimeout(() => {
+        const scrollIndex = Math.round(this.boardList.scrollLeft / this.boardList.firstElementChild.offsetWidth);
+
+        if (this.activeIndex !== scrollIndex) {
+          this.insertItem(scrollIndex, { behavior: 'smooth', source: 'scrollEvent' });
+        }
+      }, 70);
     });
 
     this.boardListContainer.appendChild(this.boardList);
 
-    // We assign it to different variables for practical access
-    // this.boardItems = this.boardList.children;
-
-    // Add events
-    this._touchStart = this.touchStart.bind(this);
-    // https://chromestatus.com/feature/5745543795965952
-    this.boardListContainer.addEventListener('touchstart', this._touchStart, { passive: true });
-
-    this._touchMove = this.touchMove.bind(this);
-    // https://chromestatus.com/feature/5745543795965952
-    this.boardListContainer.addEventListener('touchmove', this._touchMove, { passive: false });
-
-    this._touchEnd = this.touchEnd.bind(this);
-    this.boardListContainer.addEventListener('touchend', this._touchEnd);
-    this.boardListContainer.addEventListener('touchcancel', this._touchEnd);
-
-    this._resizeBoardListPositionX = this.resizeBoardListPositionX.bind(this);
-    window.addEventListener('resize', this._resizeBoardListPositionX);
-
-    // Set start index
-    // this.insertItem(this.configObject.startSlideIndex, { transition: false });
-
-    // Finally make the slider visible
-    this.boardWrapper.style.visibility = null;
-
     this.init();
-  }
 
-  get boardListPositionX() {
-    return this.boardList.positionX;
-  }
-
-  set boardListPositionX(position) {
-    this.boardList.style.transform = `translateX(${position}px)`;
-    this.boardList.positionX = position;
+    return {
+      next: ({ behavior } = {}) => { this.nextItem({ behavior, source: 'api' }); },
+      prev: ({ behavior } = {}) => { this.prevItem({ behavior, source: 'api' }); },
+      insert: (index, { behavior } = {}) => { this.insertItem(index, { behavior, source: 'api' }); }
+    };
   }
 
   async init() {
     await this.initItems();
     await this.initModules();
 
+    if (!this.sliderItems.size) {
+      this.printItemErrorMessage();
+
+      return;
+    }
+
     // Set start index
-    this.insertItem(this.configObject.startSlideIndex, { transition: false });
+    this.insertItem(this.configObject.startIndex, { behavior: 'instant', source: 'init' });
 
     // Finally make the slider visible
     this.boardWrapper.style.visibility = null;
@@ -178,8 +196,6 @@ class Slider {
         }
 
         this.sliderItems.set([...this.boardList.children].indexOf(boardListItem), { instance: itemInstance, element: item, message: item.getAttribute('data-message') });
-
-        // this.sliderItems.push({ element: item, message: item.getAttribute('data-message') });
       } catch (error) {
         console.warn(error);
       }
@@ -187,8 +203,15 @@ class Slider {
   }
 
   async initModules() {
-    // Access to the modules then initialize
     this.modules = new Set();
+
+    if (!Array.isArray(this.configObject.module)) {
+      console.error('Module property must be array, modules could not load! \n Example: \n module: [`modulePath/moduleName`, `otherModulePath/otherModuleName`]');
+
+      return;
+    }
+
+    // Access to the modules then initialize
     // Object.keys(this.configObject.module).forEach(key => {
     for (const key of this.configObject.module) {
       const splitedPath = key.split('/');
@@ -213,22 +236,9 @@ class Slider {
           ModuleInstance.append();
         }
       } catch (error) {
-        console.warn(error);
+        console.warn(error.message);
       }
     }
-  }
-
-  resizeBoardListPositionX() {
-    this.transitionOff();
-    this.boardListPositionX = -1 * this.boardList.offsetWidth * this.activeIndex;
-  }
-
-  transitionOn(transitionSpeed = this.configObject.transitionSpeed) {
-    this.boardList.style.transition = `all ${transitionSpeed}ms ease 0ms`;
-  }
-
-  transitionOff() {
-    this.boardList.style.transition = null;
   }
 
   boardListContainerCalculateHeight() {
@@ -242,237 +252,224 @@ class Slider {
     }
   }
 
-  insertItem(newIndex, { transition = true, transitionSpeed = this.configObject.transitionSpeed, source = null } = {}) {
-    if (newIndex >= this.boardList.children.length) {
-      newIndex = this.boardList.children.length - 1;
+  transitionOn() {
+    this.boardList.style.transition = 'all 250ms ease 0ms';
+  }
 
-      if (this.configObject.infinityAction) {
-        this.nextItemInfinityMotion();
+  transitionOff() {
+    this.boardList.style.transition = null;
+  }
 
-        return;
-      }
-
-      if (source !== 'touch') {
-        this.nextItemEndMotion();
-
-        return;
-      }
-    }
-
+  insertItem(newIndex, { behavior = null, source = null } = {}) {
+    // Index
     if (newIndex < 0) {
       newIndex = 0;
-
-      if (this.configObject.infinityAction) {
-        this.prevItemInfinityMotion();
-
-        return;
-      }
-
-      if (source !== 'touch') {
-        this.prevItemEndMotion();
-
-        return;
-      }
     }
 
-    if (transition === false) {
-      this.transitionOff();
-    } else {
-      transitionSpeed *= Math.abs(this.activeIndex - newIndex) ? Math.abs(this.activeIndex - newIndex) : 1;
-
-      this.transitionOn(transitionSpeed);
+    if (newIndex >= this.boardList.children.length) {
+      newIndex = this.boardList.children.length - 1;
     }
 
-    // Hide old index element
-    this.sliderItems.get(this.activeIndex).instance.hide();
-
-    // Set active index
     this.activeIndex = newIndex;
 
-    // Pass new index to mudules
+    // Extensions
+    this.initExtensions(this.activeIndex);
+
+    // Scroll
+    const scrollAbsoluteX = this.boardList.firstElementChild.offsetWidth * this.activeIndex;
+
+    if (!['smooth', 'instant', 'auto'].includes(behavior)) {
+      behavior = 'smooth';
+    }
+
+    const scrollOptions = {
+      left: scrollAbsoluteX,
+      top: 0,
+      behavior
+
+    };
+
+    // If there is a difference, move it
+    if (this.boardList.scrollLeft !== scrollAbsoluteX) {
+      this.boardList.scrollTo(scrollOptions);
+    }
+  }
+
+  initExtensions(newIndex) {
+    // Hide method, oldIndex element
+    this.sliderItems.get(this.activeIndex).instance.hide();
+
+    // Pass newIndex to the modules
     this.modules.forEach(v => {
       if (v.insertItem != null) {
         v.insertItem(newIndex);
       }
     });
 
-    // Show new index element
+    // Show method, newIndex element
     this.sliderItems.get(newIndex).instance.show();
-
-    this.boardListPositionX = -1 * this.boardList.offsetWidth * newIndex;
   }
 
-  prevItem(source = null) {
+  prevItem({ behavior = null, source = null } = {}) {
+    if (this.boardListOnTransition) {
+      return;
+    }
+
     const targetIndex = this.activeIndex - 1;
 
-    this.insertItem(targetIndex, { source });
-  }
+    if (targetIndex < 0) {
+      if (this.configObject.loop) {
+        this.prevLoopMotion();
 
-  prevItemEndMotion() {
-    if (this.prevItemEndMotionTimeoutId != null) {
-      window.clearTimeout(this.prevItemEndMotionTimeoutId);
-    } else {
-      this.transitionOn(this.configObject.transitionSpeed / 2);
-
-      this.boardListPositionX = this.boardList.offsetWidth / 10;
-    }
-
-    this.prevItemEndMotionTimeoutId = window.setTimeout(() => {
-      this.insertItem(0, { transitionSpeed: this.configObject.transitionSpeed / 2 });
-
-      this.prevItemEndMotionTimeoutId = null;
-    }, this.configObject.transitionSpeed / 2);
-  }
-
-  prevItemInfinityMotion() {
-    if (this.boardListOnTransition != null) {
-      return;
-    }
-
-    this.transitionOn();
-
-    this.boardListPositionX = this.boardList.offsetWidth;
-
-    window.setTimeout(() => {
-      this.transitionOff();
-
-      this.boardListPositionX = -1 * this.boardList.offsetWidth * this.boardList.children.length;
-
-      window.setTimeout(() => {
-        this.insertItem(this.boardList.children.length - 1);
-      }, 100);
-    }, this.configObject.transitionSpeed);
-  }
-
-  nextItem(source = null) {
-    const targetIndex = this.activeIndex + 1;
-
-    this.insertItem(targetIndex, { source });
-  }
-
-  nextItemEndMotion() {
-    if (this.nextItemEndMotionTimeoutId != null) {
-      window.clearTimeout(this.nextItemEndMotionTimeoutId);
-    } else {
-      this.transitionOn(this.configObject.transitionSpeed / 2);
-
-      this.boardListPositionX += -1 * this.boardList.offsetWidth / 10;
-    }
-
-    this.nextItemEndMotionTimeoutId = window.setTimeout(() => {
-      this.insertItem(this.boardList.children.length - 1, { transitionSpeed: this.configObject.transitionSpeed / 2 });
-
-      this.nextItemEndMotionTimeoutId = null;
-    }, this.configObject.transitionSpeed / 2);
-  }
-
-  nextItemInfinityMotion() {
-    if (this.boardListOnTransition != null) {
-      return;
-    }
-
-    this.transitionOn();
-
-    this.boardListPositionX = -1 * this.boardList.offsetWidth * this.boardList.children.length;
-
-    window.setTimeout(() => {
-      this.transitionOff();
-
-      this.boardListPositionX = this.boardList.offsetWidth;
-
-      window.setTimeout(() => {
-        this.insertItem(0);
-      }, 100);
-    }, this.configObject.transitionSpeed);
-  }
-
-  touchStart(event) {
-    if (this.boardListOnTransition != null) {
-      return;
-    }
-
-    this.transitionOff();
-
-    this.touchStartEvent = event;
-
-    this.touchPositionData = {};
-    this.touchPositionData.type = null;
-    this.touchPositionData.touchStartBoardListPositionX = this.boardListPositionX;
-    this.touchPositionData.touchXDiff = 0;
-    this.touchPositionData.touchYDiff = 0;
-
-    document.getElementById('log2').innerHTML = `${this.touchPositionData.type}`;
-  }
-
-  touchMove(event) {
-    document.getElementById('log2').innerHTML = `${this.touchPositionData.type}`;
-
-    if (typeof event.cancelable === 'boolean' && !event.cancelable) {
-      this.touchPositionData = null;
-
-      return;
-    }
-
-    if (this.boardListOnTransition != null) {
-      return;
-    }
-
-    if (this.touchPositionData == null) {
-      this.touchStart(event);
-    }
-
-    if (this.touchPositionData.type === 'vertical') {
-      return;
-    }
-
-    this.touchPositionData.touchXDiff = parseInt(event.changedTouches[0].clientX) - this.touchStartEvent.changedTouches[0].clientX;
-    this.touchPositionData.touchYDiff = parseInt(event.changedTouches[0].clientY) - this.touchStartEvent.changedTouches[0].clientY;
-
-    if (this.touchPositionData.type == null) {
-      if (Math.abs(this.touchPositionData.touchYDiff) <= Math.abs(this.touchPositionData.touchXDiff)) {
-        this.touchPositionData.type = 'horizontal';
+        return;
       } else {
-        this.touchPositionData.type = 'vertical';
+        this.prevEndMotion('10vw');
+
+        return;
       }
     }
 
-    if (this.touchPositionData.type === 'vertical') {
+    this.insertItem(targetIndex, { behavior, source });
+  }
+
+  nextItem({ behavior = null, source = null } = {}) {
+    if (this.boardListOnTransition) {
       return;
     }
 
-    if (this.touchPositionData.type === 'horizontal') {
-      this.boardListPositionX = this.touchPositionData.touchStartBoardListPositionX + this.touchPositionData.touchXDiff;
+    const targetIndex = this.activeIndex + 1;
 
-      event.preventDefault();
+    if (targetIndex >= this.boardList.children.length) {
+      if (this.configObject.loop) {
+        this.nextLoopMotion();
+
+        return;
+      } else {
+        this.nextEndMotion('-10vw');
+
+        return;
+      }
+    }
+
+    this.insertItem(targetIndex, { behavior, source });
+  }
+
+  prevEndMotion() {
+    this.endMotion('10vw');
+  }
+
+  nextEndMotion() {
+    this.endMotion('-10vw');
+  }
+
+  endMotion(positionWithUnit) {
+    this.transitionOn();
+    this.boardList.style.transform = `translateX(${positionWithUnit})`;
+
+    this.boardList.addEventListener('transitionend', () => {
+      this.transitionOn();
+      this.boardList.style.transform = null;
+    }, { once: true });
+  }
+
+  prevLoopMotion() {
+    this.loopMotion('prev');
+  }
+
+  nextLoopMotion() {
+    this.loopMotion('next');
+  }
+
+  loopMotion(direction) {
+    if (this.boardListOnTransition) {
+      return;
+    }
+
+    let firstMoveDeltaX, lastMoveDeltaX, targetIndex;
+
+    if (direction === 'next') {
+      const startPoint = this.boardList.scrollWidth - (this.boardList.scrollLeft + this.boardList.offsetWidth);
+      this.boardList.style.transform = `translateX(${startPoint}px)`;
+      this.boardList.style.overflow = 'hidden';
+
+      firstMoveDeltaX = -this.boardList.firstElementChild.offsetWidth;
+      lastMoveDeltaX = this.boardList.firstElementChild.offsetWidth;
+
+      targetIndex = 0;
+    }
+
+    if (direction === 'prev') {
+      const startPoint = -this.boardList.scrollLeft;
+      this.boardList.style.transform = `translateX(${startPoint}px)`;
+      this.boardList.style.overflow = 'hidden';
+
+      firstMoveDeltaX = this.boardList.firstElementChild.offsetWidth;
+      lastMoveDeltaX = -this.boardList.firstElementChild.offsetWidth;
+
+      targetIndex = this.boardList.children.length - 1;
+    }
+
+    this.transitionOn();
+    this.boardList.style.transform = `translateX(${firstMoveDeltaX}px)`;
+
+    this.boardList.addEventListener('transitionend', () => {
+      this.insertItem(targetIndex, { behavior: 'instant', source: 'loopMotion' });
+
+      this.boardList.style.transform = `translateX(${lastMoveDeltaX}px)`;
+
+      window.setTimeout(() => {
+        this.transitionOn();
+        this.boardList.style.transform = null;
+        this.boardList.style.overflow = null;
+      }, 10);
+    }, { once: true });
+  }
+
+  touchStart(event) {
+    if (this.boardListOnTransition) {
+      return;
+    }
+
+    this.touchStartX = null;
+
+    if (this.activeIndex === 0 || this.activeIndex === (this.boardList.children.length - 1)) {
+      this.touchStartX = event.touches[0].pageX;
+      this.touchChangeRatio = this.boardList.firstElementChild.offsetWidth / 4.5;
     }
   }
 
-  touchEnd(event) {
-    if (this.boardListOnTransition != null) {
+  touchMove(event) {
+    if (!this.touchStartX) {
       return;
     }
 
-    if (this.touchPositionData == null) {
+    if (!this.configObject.loop) {
       return;
     }
 
-    if (this.touchPositionData.type === 'vertical') {
-      this.touchPositionData = null;
+    const deltaX = event.touches[0].pageX - this.touchStartX;
 
-      return;
+    if (this.activeIndex === 0 && this.boardList.scrollLeft <= 0) {
+      if (deltaX > this.touchChangeRatio) {
+        this.touchStartX = null;
+
+        this.prevLoopMotion();
+
+        return;
+      }
     }
 
-    const target = event.target;
+    if (this.activeIndex === (this.boardList.children.length - 1) && this.boardList.scrollLeft >= (this.boardList.scrollWidth - this.boardList.firstElementChild.offsetWidth)) {
+      if (deltaX < -this.touchChangeRatio) {
+        this.touchStartX = null;
 
-    if ((target.parentNode.parentNode.offsetWidth / this.configObject.touchChangeCoefficient) <= Math.abs(this.touchPositionData.touchXDiff) && (this.touchPositionData.touchXDiff < 0)) {
-      this.nextItem('touch');
-    } else if ((target.parentNode.parentNode.offsetWidth / this.configObject.touchChangeCoefficient) <= Math.abs(this.touchPositionData.touchXDiff) && (this.touchPositionData.touchXDiff > 0)) {
-      this.prevItem('touch');
-    } else {
-      this.insertItem(this.activeIndex, { transition: false, source: 'touch' });
+        this.nextLoopMotion();
+      }
     }
+  }
 
-    this.touchPositionData = null;
+  touchStop(event) {
+    this.touchStartX = null;
   }
 
   isTouch() {
@@ -490,6 +487,54 @@ class Slider {
     const query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
     mq(query);
   }
+
+  printItemErrorMessage() {
+    console.error('Minyatur Error: There is no image to show.',
+      '\n',
+      'Please insert `div` inside of `slider container element` and then insert elements to the `div`.',
+      '\n',
+      'Example:',
+      '\n',
+      '<div id="minyatur-container">',
+      '\n',
+      '\t<div>',
+      '\n',
+      '\t\t<img src="source" />',
+      '\n',
+      '\t\t<img src="source" />',
+      '\n',
+      '\t</div>',
+      '\n',
+      '</div>'
+    );
+  }
 }
 
 export default Slider;
+
+/*
+    // touchmove
+    this.boardList.addEventListener('touchmove', (event) => {
+      if (!this.touchStartX) {
+        return;
+      }
+
+      const deltaX = Math.abs(event.touches[0].pageX - this.touchStartX);
+
+      if (deltaX >= this.touchChangeRatio) {
+        if (this.activeIndex === 0 && this.boardList.scrollLeft < 0) {
+          this.touchStartX = null;
+
+          this.prevLoopMotion();
+
+          return;
+        }
+
+        if (this.activeIndex === (this.boardList.children.length - 1) && this.boardList.scrollWidth < (this.boardList.scrollLeft + this.boardList.firstElementChild.offsetWidth)) {
+          this.touchStartX = null;
+
+          this.nextLoopMotion();
+        }
+      }
+    }, { passive: true });
+    */

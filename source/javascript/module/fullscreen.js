@@ -28,8 +28,8 @@ class Fullscreen {
       this.activeClassInstance = this.instances.get(ImportDefaultClass);
 
       this.show();
-    } catch (error) {
-      // console.log(error);
+    } catch {
+      console.error('An error occurred while loading the fullscreen module');
     }
   }
 
@@ -42,9 +42,9 @@ class Fullscreen {
 
     this.mainWrapper.addEventListener('dblclick', event => event.preventDefault());
     this.mainWrapper.addEventListener('click', event => event.preventDefault());
-    this.mainWrapper.addEventListener('touchstart', event => event.preventDefault());
-    this.mainWrapper.addEventListener('touchmove', event => event.preventDefault());
-    this.mainWrapper.addEventListener('touchend', event => event.preventDefault());
+    this.mainWrapper.addEventListener('touchstart', event => event.preventDefault(), { passive: false });
+    this.mainWrapper.addEventListener('touchmove', event => event.preventDefault(), { passive: false });
+    this.mainWrapper.addEventListener('touchend', event => event.preventDefault(), { passive: false });
 
     this.closeButtonContainer = document.createElement('div');
     this.closeButtonContainer.classList.add('mfw-close-button-container');
@@ -55,9 +55,8 @@ class Fullscreen {
 
     this.closeButton = document.createElement('button');
     this.closeButton.innerHTML = '<i class="fa-solid fa-xmark fa-2x"></i>';
-    this.closeButton.addEventListener('touchstart', this._hide, false);
-    this.closeButton.addEventListener('click', this._hide, false);
-    // this.closeButton.innerHTML = `<i class="fa-solid fa-xmark"></i> ${this.language.get('close')}`;
+    this.closeButton.addEventListener('touchstart', this._hide, { capture: false });
+    this.closeButton.addEventListener('click', this._hide, { capture: false });
     this.closeButtonContainer.appendChild(this.closeButton);
 
     document.body.appendChild(this.mainWrapper);

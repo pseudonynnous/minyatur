@@ -32,17 +32,17 @@ class Img {
     this.imageElem.addEventListener('mousemove', this._imageMouseMoveHandler);
 
     this._imageDoubleTapHandler = this.imageDoubleTapHandler.bind(this);
-    this.imageElem.addEventListener('touchstart', this._imageDoubleTapHandler);
+    this.imageElem.addEventListener('touchstart', this._imageDoubleTapHandler, { passive: true });
 
     this._imageTouchStartHandle = this.imageTouchStartHandle.bind(this);
-    this.imageElem.addEventListener('touchstart', this._imageTouchStartHandle);
+    this.imageElem.addEventListener('touchstart', this._imageTouchStartHandle, { passive: true });
 
     this._imageTouchMoveHandle = this.imageTouchMoveHandle.bind(this);
-    this.imageElem.addEventListener('touchmove', this._imageTouchMoveHandle);
+    this.imageElem.addEventListener('touchmove', this._imageTouchMoveHandle, { passive: true });
 
     this._imageTouchEndHandle = this.imageTouchEndHandle.bind(this);
-    this.imageElem.addEventListener('touchend', this._imageTouchEndHandle);
-    this.imageElem.addEventListener('touchcancel', this._imageTouchEndHandle);
+    this.imageElem.addEventListener('touchend', this._imageTouchEndHandle, { passive: true });
+    this.imageElem.addEventListener('touchcancel', this._imageTouchEndHandle, { passive: true });
 
     // add to parent
     this.mainWrapper.appendChild(this.imageWrapper);

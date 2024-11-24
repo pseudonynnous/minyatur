@@ -225,6 +225,11 @@
   z-index: 1;
   display: flex;
   flex-wrap: nowrap;
+  overflow: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
 }
 .minyatur .minyatur-board li {
   position: relative;
@@ -238,6 +243,7 @@
   padding: 0;
   box-sizing: border-box;
   flex-shrink: 0;
+  scroll-snap-align: start;
 }
 .minyatur .minyatur-board li img,
 .minyatur .minyatur-board li i,
@@ -407,7 +413,7 @@
 .minyatur-thumbnail-basic ul {
   position: relative;
   display: grid;
-  grid-gap: 1vmin;
+  grid-gap: min(2vw, 7px);
   grid-template-columns: repeat(auto-fill, minmax(min(10vmin, 50px), 1fr));
   list-style: none;
   padding: 6px 0;
@@ -451,7 +457,7 @@
 }
 
 /* END OF BASIC THUMBNAIL */
-/* SNAP THUMBNAIL */
+/* SLIDER THUMBNAIL */
 .minyatur-thumbnail-snap {
   position: relative;
   width: 100%;
@@ -469,7 +475,7 @@
   margin: 0 auto;
   display: flex;
   flex-wrap: nowrap;
-  gap: 6px;
+  gap: min(2vw, 10px);
   overflow: scroll;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -481,8 +487,8 @@
   align-items: center;
   flex-shrink: 0;
   cursor: pointer;
-  height: 70px;
-  width: 70px;
+  height: min(10vmin, 50px);
+  width: min(10vmin, 50px);
   border: 2px solid var(--color-theme-base);
   opacity: 1;
   list-style: none;
@@ -509,134 +515,6 @@
   display: block;
   margin: 0 auto;
   border: none;
-}
-
-/* END OF SLIDER SNAP */
-/* SLIDER THUMBNAIL */
-.minyatur-thumbnail-slider {
-  position: relative;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0;
-  overflow: hidden;
-  /*Gives room for arrow buttons*/
-  box-sizing: border-box;
-  user-select: none;
-}
-.minyatur-thumbnail-slider ul {
-  position: relative;
-  display: flex;
-  flex-wrap: nowrap;
-  list-style: none;
-  padding: 6px 0;
-  margin: 0 auto;
-}
-.minyatur-thumbnail-slider ul li {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  cursor: pointer;
-  height: min(10vmin, 50px);
-  width: min(10vmin, 50px);
-  border: 2px solid var(--color-theme-base);
-  opacity: 1;
-  list-style: none;
-  transition: all 0.2s;
-  /* a {
-          width: 100%;
-          height: 100%;
-          background-size: contain;
-          background-repeat: no-repeat;
-          background-position: center center;
-          background-color: red;
-          display: block;
-          font-size: 0;
-          } */
-}
-.minyatur-thumbnail-slider ul li + li {
-  margin-left: 6px;
-}
-.minyatur-thumbnail-slider ul li.active, .minyatur-thumbnail-slider ul li.active:hover {
-  border-color: var(--color-theme-dark);
-}
-.minyatur-thumbnail-slider ul li:hover {
-  background-color: var(--color-theme-light);
-}
-.minyatur-thumbnail-slider ul li > * {
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
-  margin: 0 auto;
-  border: none;
-}
-.minyatur-thumbnail-slider .minyatur-thumbnail-slider-backward-button {
-  position: absolute;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background-color: none;
-  overflow: hidden;
-  width: 40px;
-  height: 50px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-white);
-  z-index: 10;
-  cursor: pointer;
-  opacity: 1;
-  background-color: var(--background-grey-light-300);
-  left: 0px;
-  right: auto;
-}
-.minyatur-thumbnail-slider .minyatur-thumbnail-slider-backward-button::before {
-  position: absolute;
-  content: " ";
-  width: 20px;
-  height: 20px;
-  border-left: 3px solid #ddd;
-  border-top: 3px solid #ddd;
-  right: 3px;
-  transform: rotate(-45deg);
-}
-.minyatur-thumbnail-slider .minyatur-thumbnail-slider-forward-button {
-  position: absolute;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background-color: none;
-  overflow: hidden;
-  width: 40px;
-  height: 50px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-white);
-  z-index: 10;
-  cursor: pointer;
-  opacity: 1;
-  background-color: var(--background-grey-light-300);
-  left: auto;
-  right: 0px;
-}
-.minyatur-thumbnail-slider .minyatur-thumbnail-slider-forward-button::before {
-  position: absolute;
-  content: " ";
-  width: 20px;
-  height: 20px;
-  border-left: 3px solid #ddd;
-  border-top: 3px solid #ddd;
-  left: 3px;
-  transform: rotate(135deg);
-}
-@media only screen and (min-width: 667px) {
-  .minyatur-thumbnail-slider.scrollOn {
-    padding-right: 44px;
-    padding-left: 44px;
-  }
-  .minyatur-thumbnail-slider.scrollOn .minyatur-thumbnail-slider-backward-button,
-  .minyatur-thumbnail-slider.scrollOn .minyatur-thumbnail-slider-forward-button {
-    display: flex;
-  }
 }
 
 /* END OF SLIDER THUMBNAIL */

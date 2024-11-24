@@ -26,13 +26,13 @@ class Control {
   }
 
   prevItem(event) {
-    this.sliderInstance.prevItem();
+    this.sliderInstance.prevItem({ source: 'button' });
 
     event.stopPropagation();
   }
 
   nextItem(event) {
-    this.sliderInstance.nextItem();
+    this.sliderInstance.nextItem({ source: 'button' });
 
     event.stopPropagation();
   }

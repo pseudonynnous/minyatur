@@ -34,6 +34,7 @@
 		<div style="font-size: 32px; font-weight: bold; font-family: arial;">Minyatur - Slider</div>
 		<br>
 		<span id="log2">s</span>
+		<span id="log3">s</span>
 		<div>
 			<div id="slider-example2">
 				<div>
@@ -88,8 +89,9 @@
 		if (document.getElementById('slider-example2')) {
 			const sliderOptions = {
 				id: 'slider-example2',
+				loop: true,
 				module: [
-					'thumbnail/snap',
+					'thumbnail/slider',
 					'fullscreen',
 					'control',
 					// 'zoom',
@@ -110,7 +112,7 @@
 				]
 			};
 
-			new Minyatur(sliderOptions);
+			var minya = new Minyatur(sliderOptions);
 		}
 	</script>
 </body>

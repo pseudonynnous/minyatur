@@ -66,7 +66,7 @@ class Thumbnail {
     }
 
     this.insertItem(index);
-    this.sliderInstance.insertItem(index, { transitionSpeed: 100 });
+    this.sliderInstance.insertItem(index, { behavior: 'instant' });
 
     event.preventDefault();
     return false;
