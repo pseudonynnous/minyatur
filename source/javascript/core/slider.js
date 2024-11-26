@@ -9,7 +9,7 @@ class Slider {
 
   constructor(configUser = {}, sliderItemsAsParameter = []) {
     this.activeIndex = 0;
-    this.boardListOnTransition = null;
+    this.boardListOnShift = null;
 
     this.configObject = { ..._config };
 
@@ -94,12 +94,13 @@ class Slider {
     // Generate boardlist
     this.boardList = document.createElement('ul');
 
-    // Transation Evnets
+    // Transition Events
     this.boardList.addEventListener('transitionstart', () => {
-      this.boardListOnTransition = true;
+      this.boardListOnShift = true;
     });
     this.boardList.addEventListener('transitionend', () => {
-      this.boardListOnTransition = null;
+      this.boardListOnShift = null;
+
       this.transitionOff();
     });
 
@@ -122,14 +123,18 @@ class Slider {
         window.clearTimeout(this.scrollEndTimer);
       }
 
-      if (this.boardListOnTransition) {
+      if (this.boardListOnShift) {
         return;
       }
+
+      console.log('scrollEvent');
 
       this.scrollEndTimer = window.setTimeout(() => {
         const scrollIndex = Math.round(this.boardList.scrollLeft / this.boardList.firstElementChild.offsetWidth);
 
         if (this.activeIndex !== scrollIndex) {
+          console.log('scrollEventInsert');
+
           this.insertItem(scrollIndex, { behavior: 'smooth', source: 'scrollEvent' });
         }
       }, 70);
@@ -261,6 +266,20 @@ class Slider {
   }
 
   insertItem(newIndex, { behavior = null, source = null } = {}) {
+    console.log('insertItem:' + source);
+
+    if (this.activeIndex > newIndex && newIndex < 0 && this.configObject.loop) {
+      this.prevLoopMotion();
+
+      return;
+    }
+
+    if (this.activeIndex < newIndex && newIndex >= this.boardList.children.length && this.configObject.loop) {
+      this.nextLoopMotion();
+
+      return;
+    }
+
     // Index
     if (newIndex < 0) {
       newIndex = 0;
@@ -286,7 +305,6 @@ class Slider {
       left: scrollAbsoluteX,
       top: 0,
       behavior
-
     };
 
     // If there is a difference, move it
@@ -311,7 +329,7 @@ class Slider {
   }
 
   prevItem({ behavior = null, source = null } = {}) {
-    if (this.boardListOnTransition) {
+    if (this.boardListOnShift) {
       return;
     }
 
@@ -323,7 +341,7 @@ class Slider {
 
         return;
       } else {
-        this.prevEndMotion('10vw');
+        this.prevEndMotion();
 
         return;
       }
@@ -333,7 +351,7 @@ class Slider {
   }
 
   nextItem({ behavior = null, source = null } = {}) {
-    if (this.boardListOnTransition) {
+    if (this.boardListOnShift) {
       return;
     }
 
@@ -345,7 +363,7 @@ class Slider {
 
         return;
       } else {
-        this.nextEndMotion('-10vw');
+        this.nextEndMotion();
 
         return;
       }
@@ -355,11 +373,21 @@ class Slider {
   }
 
   prevEndMotion() {
-    this.endMotion('10vw');
+    const boardRelativeDelta = this.boardList.firstElementChild.offsetWidth / 6;
+    const staticDelta = 100;
+
+    const finalDelta = Math.min(boardRelativeDelta, staticDelta);
+
+    this.endMotion(`${finalDelta}px`);
   }
 
   nextEndMotion() {
-    this.endMotion('-10vw');
+    const boardRelativeDelta = this.boardList.firstElementChild.offsetWidth / 6;
+    const staticDelta = 100;
+
+    const finalDelta = Math.min(boardRelativeDelta, staticDelta);
+
+    this.endMotion(`-${finalDelta}px`);
   }
 
   endMotion(positionWithUnit) {
@@ -381,7 +409,7 @@ class Slider {
   }
 
   loopMotion(direction) {
-    if (this.boardListOnTransition) {
+    if (this.boardListOnShift) {
       return;
     }
 
@@ -426,20 +454,19 @@ class Slider {
   }
 
   touchStart(event) {
-    if (this.boardListOnTransition) {
+    if (this.boardListOnShift) {
       return;
     }
 
-    this.touchStartX = null;
+    this.boardListOnShift = true;
 
-    if (this.activeIndex === 0 || this.activeIndex === (this.boardList.children.length - 1)) {
-      this.touchStartX = event.touches[0].pageX;
-      this.touchChangeRatio = this.boardList.firstElementChild.offsetWidth / 4.5;
-    }
+    this.touchStartX = event.touches[0].pageX;
+    this.touchChangeRatio = this.boardList.firstElementChild.offsetWidth / 4.5;
+    this.onTouch = true;
   }
 
   touchMove(event) {
-    if (!this.touchStartX) {
+    if (!this.onTouch) {
       return;
     }
 
@@ -447,29 +474,31 @@ class Slider {
       return;
     }
 
-    const deltaX = event.touches[0].pageX - this.touchStartX;
-
-    if (this.activeIndex === 0 && this.boardList.scrollLeft <= 0) {
-      if (deltaX > this.touchChangeRatio) {
-        this.touchStartX = null;
-
-        this.prevLoopMotion();
-
-        return;
-      }
-    }
-
-    if (this.activeIndex === (this.boardList.children.length - 1) && this.boardList.scrollLeft >= (this.boardList.scrollWidth - this.boardList.firstElementChild.offsetWidth)) {
-      if (deltaX < -this.touchChangeRatio) {
-        this.touchStartX = null;
-
-        this.nextLoopMotion();
-      }
-    }
+    this.touchDeltaX = event.touches[0].pageX - this.touchStartX;
   }
 
   touchStop(event) {
-    this.touchStartX = null;
+    this.boardListOnShift = null;
+
+    if (!this.configObject.loop) {
+      return;
+    }
+
+    this.onTouch = null;
+
+    if (this.activeIndex === 0 && this.touchDeltaX > this.touchChangeRatio) {
+      this.onTouch = null;
+
+      this.insertItem(this.activeIndex - 1, { source: 'touchStop' });
+
+      return;
+    }
+
+    if (this.activeIndex === (this.boardList.children.length - 1) && this.touchDeltaX < -this.touchChangeRatio) {
+      this.onTouch = null;
+
+      this.insertItem(this.activeIndex + 1, { source: 'touchStop' });
+    }
   }
 
   isTouch() {
@@ -511,30 +540,3 @@ class Slider {
 }
 
 export default Slider;
-
-/*
-    // touchmove
-    this.boardList.addEventListener('touchmove', (event) => {
-      if (!this.touchStartX) {
-        return;
-      }
-
-      const deltaX = Math.abs(event.touches[0].pageX - this.touchStartX);
-
-      if (deltaX >= this.touchChangeRatio) {
-        if (this.activeIndex === 0 && this.boardList.scrollLeft < 0) {
-          this.touchStartX = null;
-
-          this.prevLoopMotion();
-
-          return;
-        }
-
-        if (this.activeIndex === (this.boardList.children.length - 1) && this.boardList.scrollWidth < (this.boardList.scrollLeft + this.boardList.firstElementChild.offsetWidth)) {
-          this.touchStartX = null;
-
-          this.nextLoopMotion();
-        }
-      }
-    }, { passive: true });
-    */
