@@ -8,7 +8,7 @@ module.exports = merge(common, {
     // relative to config folder.
     filename: '[name]',
     path: path.join(common.context, 'build'),
-     // so that modules are not extracted as separate files.
+    // so that modules are not extracted as separate files.
     chunkFormat: false
     // if we do not add publicPath, it gives problems in the browser: 'Automatic publicPath is not supported in this browser'.
     // publicPath: path.join(context, 'public'),

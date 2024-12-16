@@ -43,7 +43,7 @@ class Mouse {
       return;
     }
 
-    console.log('mouseMove');
+    // console.log('mouseMove');
 
     // Move vertcally
     const deltaX = this.mouseStartScrollLeftX - (event.pageX - this.mouseStartPageX);
@@ -58,8 +58,8 @@ class Mouse {
       behavior: 'instant'
     };
 
-    console.log(this.isMouseDown);
-    console.log(scrollOptions.left);
+    // console.log(this.isMouseDown);
+    // console.log(scrollOptions.left);
 
     this.sliderInstance.boardList.scrollTo(scrollOptions);
   }
@@ -73,10 +73,10 @@ class Mouse {
       return;
     }
 
-    console.log('mouseStop');
+    // console.log('mouseStop');
 
-    console.log(this.mouseStartScrollLeftX);
-    console.log(this.sliderInstance.boardList.scrollLeft);
+    // console.log(this.mouseStartScrollLeftX);
+    // console.log(this.sliderInstance.boardList.scrollLeft);
 
     const totalDeltaX = this.mouseStartScrollLeftX - this.sliderInstance.boardList.scrollLeft;
     const change = this.mouseChangeRatio < Math.abs(totalDeltaX);

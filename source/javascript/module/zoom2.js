@@ -14,8 +14,8 @@ class Zoom {
     this.container = document.createElement('div');
     this.container.classList.add('minyatur-zoom-container');
 
-    this.resultContainer = document.createElement('div');
-    this.resultContainer.classList.add('minyatur-zoom-result');
+    this.result = document.createElement('div');
+    this.result.classList.add('minyatur-zoom-result');
 
     this.lens = document.createElement('div');
     this.lens.classList.add('minyatur-zoom-lens');
@@ -47,11 +47,11 @@ class Zoom {
     this.sizingLens();
 
     // Calculate the ratio between result DIV and lens:
-    this.cx = this.resultContainer.offsetWidth / this.lens.offsetWidth;
-    this.cy = this.resultContainer.offsetHeight / this.lens.offsetHeight;
+    this.cx = this.result.offsetWidth / this.lens.offsetWidth;
+    this.cy = this.result.offsetHeight / this.lens.offsetHeight;
 
     // Set background properties for the result DIV
-    this.resultContainer.style.backgroundSize = `${this.getRenderedSize().width * this.cx}px ${this.getRenderedSize().height * this.cy}px`;
+    this.result.style.backgroundSize = `${this.getRenderedSize().width * this.cx}px ${this.getRenderedSize().height * this.cy}px`;
 
     // Execute a function when someone moves the cursor over the image, or the lens:
     this._moveLens = this.moveLens.bind(this);
@@ -64,19 +64,20 @@ class Zoom {
     this.sliderInstance.boardWrapper.removeEventListener('mousemove', this._moveLens);
 
     this.lens.style = null;
-    this.resultContainer.style = null;
+    this.result.style = null;
   }
 
   moveLens(e) {
     let x;
     let y;
-    const correctionX = (this.sliderInstance.boardWrapper.offsetWidth - this.getRenderedSize().width) / 2;
-    const correctionY = (this.sliderInstance.boardWrapper.offsetHeight - this.getRenderedSize().height) / 2;
+    let correctionX = (this.sliderInstance.boardWrapper.offsetWidth - this.getRenderedSize().width) / 2;
+    let correctionY = (this.sliderInstance.boardWrapper.offsetHeight - this.getRenderedSize().height) / 2;
 
+    console.log(this.configObject.expandedZoom);
     this.configObject.expandedZoom = true;
     if (this.configObject.expandedZoom === true) {
-      // correctionX = 0;
-      // correctionY = 0;
+      correctionX = 0;
+      correctionY = 0;
     }
 
     // Prevent any other actions that may occur when moving over the image
@@ -90,19 +91,10 @@ class Zoom {
     y = pos.y - (this.lens.offsetHeight / 2);
 
     // Prevent the lens from being positioned outside the image:
-    if (x > this.sliderInstance.boardWrapper.offsetWidth - this.lens.offsetWidth - correctionX) {
-      x = this.sliderInstance.boardWrapper.offsetWidth - this.lens.offsetWidth - correctionX;
-    }
-    if (x < correctionX) {
-      x = correctionX;
-    }
-
-    if (y > this.sliderInstance.boardWrapper.offsetHeight - this.lens.offsetHeight - correctionY) {
-      y = this.sliderInstance.boardWrapper.offsetHeight - this.lens.offsetHeight - correctionY;
-    }
-    if (y < correctionY) {
-      y = correctionY;
-    }
+    if (x > this.sliderInstance.boardWrapper.offsetWidth - this.lens.offsetWidth - correctionX) { x = this.sliderInstance.boardWrapper.offsetWidth - this.lens.offsetWidth - correctionX; }
+    if (x < correctionX) { x = correctionX; }
+    if (y > this.sliderInstance.boardWrapper.offsetHeight - this.lens.offsetHeight - correctionY) { y = this.sliderInstance.boardWrapper.offsetHeight - this.lens.offsetHeight - correctionY; }
+    if (y < correctionY) { y = correctionY; }
 
     // Set the position of the lens:
     this.lens.style.left = `${x}px`;
@@ -112,10 +104,12 @@ class Zoom {
     const xCentDif = (this.sliderInstance.boardWrapper.clientWidth - this.getRenderedSize().width) / 2 * this.cx;
     const yCentDif = (this.sliderInstance.boardWrapper.clientHeight - this.getRenderedSize().height) / 2 * this.cy;
 
-    // Display what the lens "sees":
-    this.resultContainer.style.backgroundPosition = `${xCentDif - (x * this.cx)}px ${yCentDif - (y * this.cy)}px`;
+    console.log(this.sliderInstance.boardWrapper.clientWidth);
 
-    this.resultContainer.style.visibility = 'visible';
+    // Display what the lens "sees":
+    this.result.style.backgroundPosition = `${xCentDif - (x * this.cx)}px ${yCentDif - (y * this.cy)}px`;
+
+    this.result.style.visibility = 'visible';
     this.lens.style.visibility = 'visible';
   }
 
@@ -133,8 +127,8 @@ class Zoom {
     y = e.pageY - a.top;
 
     // Consider any page scrolling:
-    x = x - window.scrollX;
-    y = y - window.scrollY;
+    x = x - window.pageXOffset;
+    y = y - window.pageYOffset;
 
     return { x, y };
   }
@@ -175,22 +169,26 @@ class Zoom {
   }
 
   sizingResult() {
-    document.body.appendChild(this.resultContainer);
-    this.resultContainer.style.backgroundImage = `url(${this.activeImage.src})`;
+    if (this.configObject.zoomResultId) {
+      const zoomResultContainer = document.getElementById(this.configObject.zoomResultId);
 
-    const sliderRect = this.sliderInstance.boardWrapper.getBoundingClientRect();
-    const spaceWidthAtRightOfSliderContainer = document.body.clientWidth - sliderRect.left - sliderRect.width;
-    // const spaceWidthAtLeftOfSliderContainer = document.body.clientWidth - sliderRect.left;
+      zoomResultContainer.appendChild(this.result);
 
-    this.resultContainer.style.top = `${sliderRect.top + window.scrollY}px`;
-    this.resultContainer.style.left = `${sliderRect.left + window.scrollX + sliderRect.width + 10}px`;
-    this.resultContainer.style.width = `${spaceWidthAtRightOfSliderContainer - 10}px`;
-    this.resultContainer.style.height = `${sliderRect.height}px`;
+      const resultWidth = Math.min(this.activeImage.naturalWidth, zoomResultContainer.offsetWidth);
+      const resultHeight = Math.min(this.activeImage.naturalHeight, zoomResultContainer.offsetHeight);
+
+      this.result.style.width = `${resultWidth}px`;
+      this.result.style.height = `${resultHeight}px`;
+    } else {
+      this.activeImageContainer.appendChild(this.result);
+    }
+
+    this.result.style.backgroundImage = `url(${this.activeImage.src})`;
   }
 
   sizingLens() {
-    const lensWidth = this.getRenderedSize().width / this.activeImage.naturalWidth * this.resultContainer.offsetWidth;
-    const lensHeight = this.getRenderedSize().height / this.activeImage.naturalHeight * this.resultContainer.offsetHeight;
+    const lensWidth = this.getRenderedSize().width / this.activeImage.naturalWidth * this.result.offsetWidth;
+    const lensHeight = this.getRenderedSize().height / this.activeImage.naturalHeight * this.result.offsetHeight;
 
     this.lens.style.width = `${lensWidth}px`;
     this.lens.style.height = `${lensHeight}px`;
