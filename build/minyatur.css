@@ -194,6 +194,16 @@
   overflow: hidden;
   box-sizing: border-box;
   margin: 0 auto;
+  /* hide scrollbar */
+  /* Internet Explorer 10+ */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  /* end hide scrollbar */
+}
+.minyatur::-webkit-scrollbar {
+  display: none;
 }
 .minyatur > div:not([class]) {
   position: relative;
@@ -209,8 +219,18 @@
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
+  /* hide scrollbar */
+  /* Internet Explorer 10+ */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  /* end hide scrollbar */
   /* ---------Arrow buttons ------- */
   /* The arrow button id should be: slider id + ("-prev", "-next", and "-pause-play") */
+}
+.minyatur .minyatur-board::-webkit-scrollbar {
+  display: none;
 }
 .minyatur .minyatur-board ul {
   position: absolute;
@@ -253,8 +273,11 @@
   display: block;
   margin: 0 auto;
   cursor: default;
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+.minyatur .minyatur-board li img, .minyatur .minyatur-board li video {
+  object-fit: scale-down;
 }
 .minyatur .minyatur-board li .minyatur-on-image-message-wrapper {
   position: relative;
@@ -283,7 +306,7 @@
   top: 50%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1;
+  z-index: 2;
 }
 .minyatur .minyatur-board .minyatur-board-prev-button,
 .minyatur .minyatur-board .minyatur-board-next-button {
@@ -304,7 +327,6 @@
   cursor: pointer;
   align-items: center;
   -webkit-user-select: none;
-  z-index: 2;
 }
 .minyatur .minyatur-board .minyatur-board-prev-button::before,
 .minyatur .minyatur-board .minyatur-board-next-button::before {
@@ -545,17 +567,14 @@
 /* End of zoom */
 .minyatur-zoom-result {
   position: absolute;
-  border: 2px solid var(--bordercolor-grey-light-400);
+  border: 1px solid var(--bordercolor-grey-light-400);
   visibility: hidden;
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: var(--color-image-background-color);
+  box-sizing: border-box;
   /*set the size of the result div:*/
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
   z-index: 1;
 }
 
@@ -563,40 +582,11 @@
   position: fixed;
   width: 100%;
   height: 100%;
-  background-color: rgb(40, 40, 40);
   top: 0;
   left: 0;
   z-index: 9999;
   animation-duration: 0.2s;
   animation-name: animeOpacityFadeIn;
-  /* @keyframes animeOpacityFadeIn {
-      from {
-          opacity: 0;
-          display: none;
-      }
-
-      to {
-          opacity: 1;
-          display: block;
-      }
-  }
-
-  &.hidden {
-      animation-name: animeOpacityFadeOut;
-      display: none;
-
-      @keyframes animeOpacityFadeOut {
-          from {
-              opacity: 1;
-              display: block;
-          }
-
-          to {
-              opacity: 0;
-              display: none;
-          }
-      }
-      } */
 }
 @keyframes animeOpacityFadeIn {
   from {
@@ -609,6 +599,15 @@
 .minyatur-fullscreen-wrapper.hidden,
 .minyatur-fullscreen-wrapper .hidden {
   display: none !important;
+}
+.minyatur-fullscreen-wrapper .mfw-backdrop {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 15, 15, 0.94);
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 .minyatur-fullscreen-wrapper .mfw-close-button-container {
   position: fixed;
@@ -719,7 +718,6 @@
   scale: 1;
 }
 .minyatur-fullscreen-wrapper .mfw-image-wrapper .mfw-image-container .nfw-image-item.pointer-mouse .nfw-image.nfw-zoom-in {
-  scale: 2;
   transform-origin: 0 0;
 }
 .minyatur-fullscreen-wrapper .mfw-image-wrapper .mfw-image-container .nfw-image-item.pointer-touch {
@@ -728,37 +726,4 @@
 }
 .minyatur-fullscreen-wrapper .mfw-image-wrapper .mfw-image-container .nfw-image-item.pointer-touch .nfw-image.nfw-zoom-in {
   max-width: unset;
-}
-.minyatur-fullscreen-wrapper .mfw-image2-wrapper {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-.minyatur-fullscreen-wrapper .mfw-image2-wrapper .mfw-image2-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  user-select: none;
-}
-.minyatur-fullscreen-wrapper .mfw-image2-wrapper .mfw-image2-container .nfw-image2-item {
-  margin: 0 auto;
-  position: relative;
-}
-.minyatur-fullscreen-wrapper .mfw-image2-wrapper .mfw-image2-container .nfw-image2-item .nfw-image2 {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-}
-.minyatur-fullscreen-wrapper .mfw-image2-wrapper .mfw-image2-container .nfw-image2-item .nfw-image2.nfw-zoom-out {
-  cursor: zoom-in;
-}
-.minyatur-fullscreen-wrapper .mfw-image2-wrapper .mfw-image2-container .nfw-image2-item .nfw-image2.nfw-zoom-in {
-  cursor: zoom-out;
 }

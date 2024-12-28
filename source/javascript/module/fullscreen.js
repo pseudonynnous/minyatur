@@ -8,6 +8,8 @@ class Fullscreen {
 
     this._eventRouter = this.eventRouter.bind(this);
     this.sliderInstance.boardWrapper.addEventListener('click', this._eventRouter);
+
+    this._keyhandler = this.keyhandler.bind(this);
   }
 
   async eventRouter() {
@@ -29,7 +31,7 @@ class Fullscreen {
 
       this.show();
     } catch (error) {
-      console.error(`An error occurred while loading the fullscreen module: ${error.message}`);
+      // console.error(`An error occurred while loading the fullscreen module: ${error.message}`);
     }
   }
 
@@ -72,6 +74,7 @@ class Fullscreen {
   }
 
   show() {
+    document.addEventListener('keydown', this._keyhandler);
     document.body.style.overflow = 'hidden';
 
     this.mainWrapper.classList.remove('hidden');
@@ -79,10 +82,25 @@ class Fullscreen {
   }
 
   hide() {
+    document.removeEventListener('keydown', this._keyhandler);
     document.body.style.overflow = null;
 
     this.mainWrapper.classList.add('hidden');
     this.activeClassInstance.hide();
+  }
+
+  keyhandler(event) {
+    let isEscape = false;
+
+    if ('key' in event) {
+      isEscape = (event.key === 'Escape' || event.key === 'Esc');
+    } else {
+      isEscape = (event.keyCode === 27);
+    }
+
+    if (isEscape) {
+      this.hide();
+    }
   }
 }
 

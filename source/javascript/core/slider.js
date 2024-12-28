@@ -180,13 +180,6 @@ class Slider {
         const boardListItem = document.createElement('li');
         this.boardList.appendChild(boardListItem);
 
-        // https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit
-        const objectFitSupportedElements = ['img', 'video'];
-
-        if (objectFitSupportedElements.includes(item.tagName.toLowerCase())) {
-          item.style.objectFit = this.configObject.objectFit;
-        }
-
         boardListItem.appendChild(item);
 
         // Bu mesaj ekleme kısmını kontrol et!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -289,10 +282,13 @@ class Slider {
       newIndex = this.boardList.children.length - 1;
     }
 
+    // module hide;
+    this.triggerModuleHide(this.activeIndex);
+
     this.activeIndex = newIndex;
 
-    // Extensions
-    this.initExtensions(this.activeIndex);
+    // module show
+    this.triggerModuleInit(this.activeIndex);
 
     // Scroll
     const scrollAbsoluteX = this.boardList.firstElementChild.offsetWidth * this.activeIndex;
@@ -313,10 +309,12 @@ class Slider {
     }
   }
 
-  initExtensions(newIndex) {
+  triggerModuleHide(index) {
     // Hide method, oldIndex element
     this.sliderItems.get(this.activeIndex).instance.hide();
+  }
 
+  triggerModuleInit(newIndex) {
     // Pass newIndex to the modules
     this.modules.forEach(v => {
       if (v.insertItem != null) {
